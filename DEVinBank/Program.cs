@@ -1,26 +1,64 @@
-﻿using DEVinBank.Classes;
-
-var account1 = new BankAccount("Gabriel Beserra", "117.989.456-14", "Rua das Magnólias", 4000.00, 5000.00);
-var account2 = new BankAccount("Gabrielle Caigara", "111.290.123-12", "Rua dos Alfedeiros", 6000.00, 4000.00);
-
-Console.WriteLine($"Customer: {account1._name}\nCPF: {account1._cpf}\nAccount Number: {account1._accNumber}\nBranch: {account1._branchName}\nAddress: {account1._address}\nMonthly Income: R${account1._monthlyIncome}\nBalance: R${account1._balance}");
-Console.WriteLine("\n");
-Console.WriteLine($"Customer: {account2._name}\nCPF: {account2._cpf}\nAccount Number: {account2._accNumber}\nBranch: {account2._branchName}\nAddress: {account2._address}\nMonthly Income: R${account2._monthlyIncome}\nBalance: R${account2._balance}");
-
-
-/*
-
-using System;
+﻿using System;
+using DEVinBank.Classes;
+using DEVinBank.Screens;
 
 namespace DEVinBank
 {
     class Program
     {
-        static void Main()
+        static public void Main()
         {
+            int state = -1;
 
+            while(true)
+            {
+                #region Clear console and show main menu
+                if (state == -1)
+                {
+                    Console.Clear();
+                    state = 0;
+                }
+                #endregion
+
+                #region Show main menu
+                if (state == 0)
+                {
+                    state = Menu.MainMenu();
+
+                }
+                #endregion
+
+                #region Show create account menu
+                if (state == 1)
+                {
+                    state = Menu.AccountMenu();
+                }
+                #endregion
+
+                #region Create Checking Account
+                if (state == 11)
+                {
+                    Console.Clear();
+                    var name = BankAccount.SetCustomerName();
+                    if (name == null)
+                        state = -1;
+
+                    var cpf = BankAccount.SetCustomerCPF();
+                    if (cpf == null)
+                        state = -1;
+
+                    var branch = BankAccount.SetCustomerBranch();
+                    if (branch == null)
+                        state = -1;
+                }
+                #endregion
+
+                // Exit program
+                if (state == 7)
+                {
+                    break;
+                }
+            }
         }
     }
 }
-
-*/
