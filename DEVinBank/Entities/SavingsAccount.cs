@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace DEVinBank.Classes
 {
-    internal class SavingsAccount
+    public class SavingsAccount : BankAccount
     {
+        public SavingsAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type) : base(name, cpf, address, monthlyIncome, branch, initialBalance, type)
+        {
+            accountsLog.Add(this);
+        }
+
+        private static string? SimulateInterestsInMonths()
+        {
+
+        }
     }
 }

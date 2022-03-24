@@ -11,7 +11,10 @@ namespace DEVinBank.Classes
 {
     public abstract class BankAccount
     {
-        readonly static int accountNumberSeed = 1000;
+        protected static List<Transaction> transactionsLog = new();
+        protected static List<BankAccount> accountsLog = new();
+
+        private static int accountNumberSeed = 1;
         readonly static string[] branches = { "001 - Florianópolis", "002 - São José", "003 - Biguaçu" };
 
         public static string? SetCustomerName()
@@ -120,7 +123,12 @@ namespace DEVinBank.Classes
                 if (salary == null)
                     throw new Exception();
 
-                return Decimal.Round(Convert.ToDecimal(salary.Trim()), 2);
+                decimal decimalSalary = Decimal.Round(Convert.ToDecimal(salary.Trim()), 2);
+
+                if (decimalSalary <= 0)
+                    throw new Exception();
+
+                return decimalSalary;
             }
             catch (Exception)
             {
@@ -134,7 +142,12 @@ namespace DEVinBank.Classes
                 if (salary == null)
                     return null;
 
-                return Decimal.Round(Convert.ToDecimal(salary.Trim()), 2);
+                decimal decimalSalary = Decimal.Round(Convert.ToDecimal(salary.Trim()), 2);
+
+                if (decimalSalary <= 0)
+                    return null;
+
+                return decimalSalary;
             }
         }
 
@@ -176,64 +189,126 @@ namespace DEVinBank.Classes
                 return null;
             }
         }
+        public static decimal? SetInitialBalance()
+        {
+            Console.Write("Digite o saldo inicial desta conta: R$");
 
-        public string GetAccountHistory()
+            try
+            {
+                string? initialBalance = Console.ReadLine();
+
+                if (initialBalance == null)
+                    throw new Exception();
+
+                decimal decimalInitialBalance = Decimal.Round(Convert.ToDecimal(initialBalance.Trim()), 2);
+
+                if (decimalInitialBalance <= 0)
+                    throw new Exception();
+
+                return decimalInitialBalance;
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nRenda mensal inválida!");
+                Console.Write("Digite novamente: R$");
+                Console.ResetColor();
+
+                string? initialBalance = Console.ReadLine();
+
+                if (initialBalance == null)
+                    return null;
+
+                decimal decimalInitialBalance = Decimal.Round(Convert.ToDecimal(initialBalance.Trim()), 2);
+
+                if (decimalInitialBalance <= 0)
+                    return null;
+
+                return decimalInitialBalance;
+            }
+        }
+
+        public static string ListAllAccounts()
+        {
+            var accountsReport = new System.Text.StringBuilder();
+
+            accountsReport.AppendLine("Titular\t\t\tCPF\t\tTipo de conta\t\tNúmero da conta\t\tAgência");
+            foreach(var account in accountsLog)
+            {
+                accountsReport.AppendLine($"{account.Name}\t\t{account.CPF}\t\t{account.Type}\t\t{account.AccNumber}\t\t{account.Branch}");
+            }
+
+            return accountsReport.ToString();
+        }
+
+        public static string ShowAccountHistory()
         {
             var historyReport = new System.Text.StringBuilder();
 
             historyReport.AppendLine("Data\t\t\tQuantidade\t\t\tSaldo\t\t\tDescrição");
-            foreach(var transaction in transactions)
+            foreach(var transaction in transactionsLog)
             {
-                historyReport.AppendLine($"{transaction._date.ToShortDateString()} {transaction._date.ToShortTimeString()}\t{transaction._amount}\t\t\t\t{transaction._currentBalance}\t\t\t{transaction._note}");
+                historyReport.AppendLine($"{transaction.Date.ToShortDateString()} {transaction.Date.ToShortTimeString()}\t{transaction.Amount}\t\t\t\t{transaction.CurrentBalance}\t\t\t{transaction.Note}");
             }
 
             return historyReport.ToString();
         }
 
-        public string _name { get; }
-        public string _cpf { get; }
-        public string _address { get; }
-        public decimal _monthlyIncome { get; }
-        public string _accNumber { get; }
-        public string _branchName { get; }
-        public decimal _balance { get; set; }
+        public string? Name { get; set; }
+        public string? CPF { get; }
+        public string? Address { get; set; }
+        public decimal? MonthlyIncome { get; set; }
+        public string? AccNumber { get; private set; }
+        public string? Branch { get; set; }
+        public decimal? Balance { get; set; }
+        public string? Type { get; set; }
 
-        public BankAccount(string name, string cpf, string address, decimal monthlyIncome, decimal initialBalance)
+        public BankAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type)
         {
-            _name = name;
-            _cpf = cpf;
-            _address = address;
-            _monthlyIncome = monthlyIncome;
-            _balance = initialBalance;
+            Name = name;
+            CPF = cpf;
+            Address = address;
+            MonthlyIncome = monthlyIncome;
+            Balance = initialBalance;
 
-            _accNumber = accountNumberSeed.ToString();
+            AccNumber = accountNumberSeed.ToString();
             accountNumberSeed++;
 
-            _branchName = SetCustomerBranchRandomly();
+            Branch = branch;
+            Type = type;
             MakeDeposit(initialBalance, DateTime.Now, "Saldo inicial.");
         }
-
-        public List<Transaction> transactions = new List<Transaction>();
-
-        
-        public virtual void MakeWithdrawal(decimal amount, DateTime date, string note)
-        {
-        }
-
-        public void MakeDeposit(decimal amount, DateTime date, string note)
+        public void MakeDeposit(decimal? amount, DateTime date, string? note)
         {
             if (amount <= 0)
             {
-               Console.WriteLine("A quantia para depósito deve ser positiva!");
+                Console.WriteLine("A quantia para depósito deve ser positiva!");
                 return;
             }
-            var deposit = new Transaction(amount, date, note, _balance);
-            transactions.Add(deposit);
+            var deposit = new Transaction(amount, date, note, Balance);
+            transactionsLog.Add(deposit);
         }
 
-        public void ShowHistory()
+        public virtual void RegisterAccount()
         {
+        }
+        public virtual void MakeWithdrawal(decimal? amount, DateTime date, string? note)
+        {
+            if (amount <= 0)
+            {
+                Console.WriteLine("A quantia para saque deve ser positiva!");
+                return;
+            }
 
+            if (Balance - amount < 0)
+            {
+                Console.WriteLine("Você não possui fundos suficientes!");
+                return;
+            }
+
+            Balance -= amount;
+            var withdrawal = new Transaction(-amount, date, note, Balance);
+            transactionsLog.Add(withdrawal);
         }
 
         public void MakeTransfer()

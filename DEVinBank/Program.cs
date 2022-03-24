@@ -8,11 +8,11 @@ namespace DEVinBank
     {
         static public void Main()
         {
-            int state = -1;
+            int state = 0;
 
             while(true)
             {
-                #region Clear console and show main menu
+                #region When error clear console and show main menu
                 if (state == -1)
                 {
                     Console.Clear();
@@ -38,19 +38,65 @@ namespace DEVinBank
                 #region Create Checking Account
                 if (state == 11)
                 {
-                    Console.Clear();
-                    var name = BankAccount.SetCustomerName();
-                    if (name == null)
-                        state = -1;
+                    try
+                    {
+                        Console.Clear();
+                        var name = BankAccount.SetCustomerName();
+                        if (name == null)
+                            throw new Exception();
 
-                    var cpf = BankAccount.SetCustomerCPF();
-                    if (cpf == null)
-                        state = -1;
+                        var cpf = BankAccount.SetCustomerCPF();
+                        if (cpf == null)
+                            throw new Exception();
 
-                    var branch = BankAccount.SetCustomerBranch();
-                    if (branch == null)
+                        var address = BankAccount.SetCustomerAddress();
+                        if (address == null)
+                            throw new Exception();
+
+                        var monthlyIncome = BankAccount.SetCustomerMonthlyIncome();
+                        if (monthlyIncome == null)
+                            throw new Exception();
+
+                        var branch = BankAccount.SetCustomerBranch();
+                        if (branch == null)
+                            throw new Exception();
+
+                        var initialBalance = BankAccount.SetInitialBalance();
+                        if (initialBalance == null)
+                            throw new Exception();
+
+                        string accountType = "Conta Corrente";
+
+                        CheckingAccount newAccount = new(name, cpf, address, monthlyIncome, branch, initialBalance, accountType);
+
+                        Console.Clear();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Conta criada com sucesso!\n");
+                        Console.ResetColor();
+                        Console.WriteLine($"Titular: {newAccount.Name}");
+                        Console.WriteLine($"CPF: {newAccount.CPF}");
+                        Console.WriteLine($"Endereço: {newAccount.Address}");
+                        Console.WriteLine($"Renda mensal: R${String.Format("{0:0.00}", newAccount.MonthlyIncome)}\n");
+                        Console.WriteLine($"Tipo de conta: {newAccount.Type}");
+                        Console.WriteLine($"Número da conta: {newAccount.AccNumber}");
+                        Console.WriteLine($"Agência: {newAccount.Branch}");
+                        Console.WriteLine($"Saldo Inicial: R${String.Format("{0:0.00}", newAccount.Balance)}\n");
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
                         state = -1;
+                    }
                 }
+                #endregion
+
+                #region Create Savings Account
+
                 #endregion
 
                 // Exit program

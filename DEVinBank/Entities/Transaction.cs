@@ -8,17 +8,17 @@ namespace DEVinBank.Classes
 {
     public class Transaction
     {
-        public decimal _amount { get; }
-        public DateTime _date { get; }
-        public string _note { get; }
-        public decimal _currentBalance { get;}
+        public decimal? Amount { get; }
+        public DateTime Date { get; }
+        public string? Note { get; }
+        public decimal? CurrentBalance { get;}
 
-        public Transaction(decimal amount, DateTime date, string note, decimal currentBalance)
+        public Transaction(decimal? amount, DateTime date, string? note, decimal? currentBalance)
         {
-            _amount = amount;
-            _date = date;
-            _note = note;
-            _currentBalance = currentBalance;
+            Amount = amount;
+            Date = date;
+            Note = note;
+            CurrentBalance = currentBalance;
         }
     }
 }

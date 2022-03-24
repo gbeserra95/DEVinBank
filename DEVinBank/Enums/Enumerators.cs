@@ -8,10 +8,11 @@ namespace DEVinBank.Enums
 {
     public class Enumerators
     {
-        public enum Branches
+        public enum AccountTypes
         {
-            
-
+            CheckingAccount,
+            SavingsAccount,
+            InvestmentAccount
         }
     }
 }

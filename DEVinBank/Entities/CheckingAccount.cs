@@ -8,11 +8,12 @@ namespace DEVinBank.Classes
 {
     public class CheckingAccount : BankAccount
     {
-        public CheckingAccount(string name, string cpf, string address, decimal monthlyIncome, decimal initialBalance) : base(name, cpf, address, monthlyIncome, initialBalance)
+        public CheckingAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type) : base(name, cpf, address, monthlyIncome, branch, initialBalance, type)
         {
+            accountsLog.Add(this);
         }
 
-        public override void MakeWithdrawal(decimal amount, DateTime date, string note)
+        public override void MakeWithdrawal(decimal? amount, DateTime date, string? note)
         {
             if (amount <= 0)
             {
@@ -20,15 +21,15 @@ namespace DEVinBank.Classes
                 return;
             }
 
-            if (_balance - amount < -_monthlyIncome * 0.1m)
+            if (Balance - amount < -MonthlyIncome * 0.1m)
             {
                 Console.WriteLine("Você excedeu seu limite do cheque especial!");
                 return;
             }
-            
-            _balance -= amount;
-            var withdrawal = new Transaction(-amount, date, note, _balance);
-            transactions.Add(withdrawal);
+
+            Balance -= amount;
+            var withdrawal = new Transaction(-amount, date, note, Balance);
+            transactionsLog.Add(withdrawal);
         }
     }
 }
