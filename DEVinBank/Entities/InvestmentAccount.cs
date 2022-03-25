@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DEVinBank.Classes
+namespace DEVinBank.Entities
 {
     public class InvestmentAccount : BankAccount
     {

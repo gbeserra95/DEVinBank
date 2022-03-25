@@ -1,12 +1,13 @@
 ﻿using System;
-using DEVinBank.Classes;
+using DEVinBank.Entities;
 using DEVinBank.Screens;
 
 namespace DEVinBank
 {
     class Program
     {
-        static public void Main()
+        public static DateTime initialTime = DateTime.Now;
+        static private void Main()
         {
             int state = 0;
 
@@ -95,6 +96,43 @@ namespace DEVinBank
                         Console.WriteLine($"Número da conta: {newAccount.AccNumber}");
                         Console.WriteLine($"Agência: {newAccount.Branch}");
                         Console.WriteLine($"Saldo Inicial: R${String.Format("{0:0.00}", newAccount.Balance)}\n");
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
+                #region Withdrawal
+                if (state == 2)
+                {
+                    try
+                    {
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        if (account == null)
+                            throw new Exception();
+
+                        Console.WriteLine($"\nTitular: {account.Name}");
+                        Console.WriteLine($"CPF: {account.CPF}");
+                        Console.WriteLine($"{account.Type}: {account.AccNumber}");
+                        Console.WriteLine($"Agência: {account.Branch}");
+                        Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+
+                        decimal? amount = BankAccount.CheckCurrencyInput("Qual a quantia que você deseja sacar? R$", "Quantia inválida");
+                        if (amount == null)
+                            throw new Exception();
+
+                        Console.Write("Adicione uma descrição para essa transação: ");
+                        string? note = Console.ReadLine();
+
+                        account.MakeWithdrawal(amount, DateTime.Now, note);
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();

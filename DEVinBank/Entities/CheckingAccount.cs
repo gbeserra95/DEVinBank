@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DEVinBank.Classes
+namespace DEVinBank.Entities
 {
     public class CheckingAccount : BankAccount
     {
@@ -17,13 +17,17 @@ namespace DEVinBank.Classes
         {
             if (amount <= 0)
             {
-                Console.WriteLine("A quantia para saque deve ser positiva!");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nNão foi possível realizar o saque. A quantia para saque deve ser positiva!");
+                Console.ResetColor();
                 return;
             }
 
             if (Balance - amount < -MonthlyIncome * 0.1m)
             {
-                Console.WriteLine("Você excedeu seu limite do cheque especial!");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nNão foi possível realizar o saque. Você excedeu seu limite do cheque especial!!");
+                Console.ResetColor();
                 return;
             }
 

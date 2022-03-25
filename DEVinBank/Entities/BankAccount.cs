@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using DEVinBank.Validations;
 using DEVinBank.Screens;
 
-namespace DEVinBank.Classes
+namespace DEVinBank.Entities
 {
     public class BankAccount
     {
@@ -17,6 +17,44 @@ namespace DEVinBank.Classes
         private static int accountNumberSeed = 1;
         readonly static string[] branches = { "001 - Florianópolis", "002 - São José", "003 - Biguaçu" };
 
+        public static decimal? CheckCurrencyInput(string instructionMessage, string errorMessage)
+        {
+            Console.Write(instructionMessage);
+
+            try
+            {
+                string? value = Console.ReadLine();
+
+                if (value == null)
+                    throw new Exception();
+
+                decimal decimalValue = Decimal.Round(Convert.ToDecimal(value.Trim()), 2);
+
+                if (decimalValue <= 0)
+                    throw new Exception();
+
+                return decimalValue;
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\n{errorMessage}");
+                Console.ResetColor();
+                Console.Write("Digite novamente: R$");
+
+                string? value = Console.ReadLine();
+
+                if (value == null)
+                    return null;
+
+                decimal decimalValue = Decimal.Round(Convert.ToDecimal(value.Trim()), 2);
+
+                if (decimalValue <= 0)
+                    return null;
+
+                return decimalValue;
+            }
+        }
         public static string? SetCustomerName()
         {
             Console.Write("Digite o nome do titular da conta: ");
@@ -49,7 +87,6 @@ namespace DEVinBank.Classes
                 return name.Trim();
             }
         }
-
         public static string? SetCustomerCPF()
         {
             Console.Write("Digite o CPF do titular da conta (apenas dígitos): ");
@@ -78,7 +115,6 @@ namespace DEVinBank.Classes
                 return cpf;
             }
         }
-
         public static string? SetCustomerAddress()
         {
             Console.Write("Digite o endereço do titular da conta: ");
@@ -111,46 +147,10 @@ namespace DEVinBank.Classes
                 return address.Trim();
             }
         }
-
         public static decimal? SetCustomerMonthlyIncome()
         {
-            Console.Write("Digite a renda mensal do titular da conta: R$");
-
-            try
-            {
-                string? salary = Console.ReadLine();
-
-                if (salary == null)
-                    throw new Exception();
-
-                decimal decimalSalary = Decimal.Round(Convert.ToDecimal(salary.Trim()), 2);
-
-                if (decimalSalary <= 0)
-                    throw new Exception();
-
-                return decimalSalary;
-            }
-            catch (Exception)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nRenda mensal inválida!");
-                Console.Write("Digite novamente: R$");
-                Console.ResetColor();
-
-                string? salary = Console.ReadLine();
-
-                if (salary == null)
-                    return null;
-
-                decimal decimalSalary = Decimal.Round(Convert.ToDecimal(salary.Trim()), 2);
-
-                if (decimalSalary <= 0)
-                    return null;
-
-                return decimalSalary;
-            }
+            return CheckCurrencyInput("Digite a renda mensal do titular da conta: R$", "Renda mensal inválida!");
         }
-
         public static string? SetCustomerBranch()
         {
             Console.WriteLine("Escolha sua agência de preferência:");
@@ -191,43 +191,64 @@ namespace DEVinBank.Classes
         }
         public static decimal? SetInitialBalance()
         {
-            Console.Write("Digite o saldo inicial desta conta: R$");
-
+            return CheckCurrencyInput("Digite o saldo inicial desta conta: R$", "Renda mensal inválida!");
+        }
+        public static BankAccount? GetBankAccountByAccountNumber()
+        {
             try
             {
-                string? initialBalance = Console.ReadLine();
+                if(accountsLog.Count == 0)
+                {
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Não existem contas cadastradas neste banco.");
+                    Console.ResetColor();
 
-                if (initialBalance == null)
+                    Console.WriteLine("Pressione enter para sair...");
+                    Console.ReadLine();
+
+                    return null;
+                }
+
+                Console.Clear();
+                Console.Write("Digite o número da conta: ");
+
+                string? accountNumber = Console.ReadLine();
+
+                if (accountNumber == null)
                     throw new Exception();
 
-                decimal decimalInitialBalance = Decimal.Round(Convert.ToDecimal(initialBalance.Trim()), 2);
+                BankAccount filteredAccount = accountsLog.First(account => account.AccNumber == accountNumber.Trim());
 
-                if (decimalInitialBalance <= 0)
+                if (filteredAccount == null)
+                {
                     throw new Exception();
+                }
 
-                return decimalInitialBalance;
-            }
-            catch (Exception)
+                return filteredAccount;
+
+            } catch (Exception)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nRenda mensal inválida!");
-                Console.Write("Digite novamente: R$");
+                Console.WriteLine("\nNúmero da conta inválido!");
+                Console.Write("Digite novamente: ");
                 Console.ResetColor();
 
-                string? initialBalance = Console.ReadLine();
+                string? accountNumber = Console.ReadLine();
 
-                if (initialBalance == null)
+                if (accountNumber == null)
                     return null;
 
-                decimal decimalInitialBalance = Decimal.Round(Convert.ToDecimal(initialBalance.Trim()), 2);
+                BankAccount filteredAccount = (BankAccount)accountsLog.First(account => account.AccNumber == accountNumber);
 
-                if (decimalInitialBalance <= 0)
+                if (filteredAccount == null)
+                {
                     return null;
+                }
 
-                return decimalInitialBalance;
+                return filteredAccount;
             }
         }
-
         public static string ListAllAccounts()
         {
             var accountsReport = new System.Text.StringBuilder();
@@ -239,7 +260,6 @@ namespace DEVinBank.Classes
 
             return accountsReport.ToString();
         }
-
         public static string ShowAccountHistory()
         {
             var historyReport = new System.Text.StringBuilder();
@@ -288,26 +308,31 @@ namespace DEVinBank.Classes
             transactionsLog.Add(deposit);
         }
 
-        public virtual void RegisterAccount()
-        {
-        }
         public virtual void MakeWithdrawal(decimal? amount, DateTime date, string? note)
         {
             if (amount <= 0)
             {
-                Console.WriteLine("A quantia para saque deve ser positiva!");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nNão foi possível realizar o saque. A quantia para saque deve ser positiva!");
+                Console.ResetColor();
                 return;
             }
 
             if (Balance - amount < 0)
             {
-                Console.WriteLine("Você não possui fundos suficientes!");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nNão foi possível realizar o saque. Você não possui fundos suficientes!");
+                Console.ResetColor();
                 return;
             }
 
             Balance -= amount;
             var withdrawal = new Transaction(-amount, date, note, Balance);
             transactionsLog.Add(withdrawal);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nSaque realizado com sucesso! Seu saldo é de R${Balance}");
+            Console.ResetColor();
         }
 
         public void MakeTransfer()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DEVinBank;
 
 namespace DEVinBank.Screens
 {
@@ -21,7 +22,7 @@ namespace DEVinBank.Screens
 
         public static int MainMenu()
         {
-            Console.WriteLine("Bem-vindo ao DEVinBank! O que você deseja fazer hoje?\n");
+            Console.WriteLine($"Bem-vindo ao DEVinBank! O que você deseja fazer hoje {Program.initialTime:dd/MM/yyyy}?\n");
             Console.WriteLine("1 - Criar uma conta");
             Console.WriteLine("2 - Saque");
             Console.WriteLine("3 - Depósito");
