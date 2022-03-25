@@ -132,7 +132,8 @@ namespace DEVinBank
                         Console.Write("Adicione uma descrição para essa transação: ");
                         string? note = Console.ReadLine();
 
-                        account.MakeWithdrawal(amount, DateTime.Now, note);
+                        if (!account.MakeWithdrawal(amount, DateTime.Now, note))
+                            throw new Exception();
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nSaque realizado com sucesso!");
@@ -266,6 +267,19 @@ namespace DEVinBank
                 {
                     try
                     {
+                        if (initialTime.DayOfWeek == DayOfWeek.Saturday || initialTime.DayOfWeek == DayOfWeek.Saturday)
+                        {
+                            Console.Clear();
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Não é possível realizar transferências nos fins de semana.\n");
+                            Console.ResetColor();
+
+                            Console.WriteLine("Pressione enter para sair...");
+                            Console.ReadLine();
+
+                            throw new Exception();
+                        }
+
                         BankAccount? originAccount = BankAccount.GetBankAccountByAccountNumber(0);
                         if (originAccount == null)
                             throw new Exception();
@@ -277,6 +291,19 @@ namespace DEVinBank
                         Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", originAccount.Balance)}\n");
 
                         BankAccount? destinationAccount = BankAccount.GetBankAccountByAccountNumber(1);
+
+                        if (originAccount == destinationAccount)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("\nNão é possível realizar a transferência. As contas de origem e destino são as mesmas!\n");
+                            Console.ResetColor();
+
+                            Console.WriteLine("Pressione enter para sair...");
+                            Console.ReadLine();
+
+                            throw new Exception();
+                        }
+
                         if (destinationAccount == null)
                             throw new Exception();
 
@@ -289,7 +316,8 @@ namespace DEVinBank
                         if (amount == null)
                             throw new Exception();
 
-                        originAccount.MakeTransferTo(destinationAccount, amount);
+                        if (!originAccount.MakeTransferTo(destinationAccount, amount))
+                            throw new Exception();
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nTransferência realizada com sucesso!");

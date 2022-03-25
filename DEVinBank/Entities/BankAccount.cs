@@ -296,29 +296,39 @@ namespace DEVinBank.Entities
             Branch = branch;
             Type = type;
 
-            MakeDeposit(initialBalance, DateTime.Now, "Saldo inicial");
+            MakeDeposit(initialBalance, DateTime.Now, "Saldo inicial.");
         }
-        public virtual void MakeWithdrawal(decimal? amount, DateTime date, string? note)
+        public virtual bool MakeWithdrawal(decimal? amount, DateTime date, string? note)
         {
             if (amount <= 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nNão foi possível realizar o saque. A quantia para saque deve ser positiva!");
+                Console.WriteLine("\nNão foi possível realizar o saque. A quantia para saque deve ser positiva!\n");
                 Console.ResetColor();
-                return;
+
+                Console.WriteLine("Pressione enter para sair...");
+                Console.ReadLine();
+
+                return false;
             }
 
             if (Balance - amount < 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nNão foi possível realizar o saque. Você não possui fundos suficientes!");
+                Console.WriteLine("\nNão foi possível realizar o saque. Você não possui fundos suficientes!\n");
                 Console.ResetColor();
-                return;
+
+                Console.WriteLine("Pressione enter para sair...");
+                Console.ReadLine();
+
+                return false;
             }
 
             Balance -= amount;
             var withdrawal = new Transaction(AccNumber, -amount, date, note);
             Transactions.Add(withdrawal);
+
+            return true;
         }
 
         public void MakeDeposit(decimal? amount, DateTime date, string? note)
@@ -355,10 +365,13 @@ namespace DEVinBank.Entities
             return historyReport.ToString();
         }
 
-        public void MakeTransferTo(BankAccount destination, decimal? amount)
+        public bool MakeTransferTo(BankAccount destination, decimal? amount)
         {
-            MakeWithdrawal(amount, DateTime.Now, $"Transferência para {destination.Name} ({destination.Type}: {destination.AccNumber}).");
+            if (!MakeWithdrawal(amount, DateTime.Now, $"Transferência para {destination.Name} ({destination.Type}: {destination.AccNumber})."))
+                return false;
+
             destination.MakeDeposit(amount, DateTime.Now, $"Transferência recebida de {Name} ({Type}: {AccNumber}).");
+            return true;
         }
 
         public void ChangeCustomerData()

@@ -13,27 +13,37 @@ namespace DEVinBank.Entities
             Accounts.Add(this);
         }
 
-        public override void MakeWithdrawal(decimal? amount, DateTime date, string? note)
+        public override bool MakeWithdrawal(decimal? amount, DateTime date, string? note)
         {
             if (amount <= 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nNão foi possível realizar o saque. A quantia para saque deve ser positiva!");
+                Console.WriteLine("\nNão foi possível realizar o saque. A quantia para saque deve ser positiva!\n");
                 Console.ResetColor();
-                return;
+
+                Console.WriteLine("Pressione enter para sair...");
+                Console.ReadLine();
+
+                return false;
             }
 
             if (Balance - amount < -MonthlyIncome * 0.1m)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nNão foi possível realizar o saque. Você excedeu seu limite do cheque especial!!");
+                Console.WriteLine("\nNão foi possível realizar o saque. Você excedeu seu limite do cheque especial!\n");
                 Console.ResetColor();
-                return;
+
+                Console.WriteLine("Pressione enter para sair...");
+                Console.ReadLine();
+
+                return false;
             }
 
             Balance -= amount;
             var withdrawal = new Transaction(AccNumber, -amount, date, note);
             Transactions.Add(withdrawal);
+
+            return true;
         }
     }
 }
