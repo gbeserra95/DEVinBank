@@ -184,6 +184,49 @@ namespace DEVinBank
                 }
                 #endregion
 
+                #region Display Account funds
+                if (state == 4)
+                {
+                    try
+                    {
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        if (account == null)
+                            throw new Exception();
+
+                        Console.WriteLine($"\nTitular: {account.Name}");
+                        Console.WriteLine($"CPF: {account.CPF}");
+                        Console.WriteLine($"{account.Type}: {account.AccNumber}");
+                        Console.WriteLine($"Agência: {account.Branch}");
+                        if (account.Balance > 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else if (account.Balance < 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                        }
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    } 
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
                 #region List all accounts
                 if (state == 7)
                 {

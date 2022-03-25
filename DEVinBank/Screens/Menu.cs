@@ -24,11 +24,11 @@ namespace DEVinBank.Screens
         {
             Console.WriteLine($"Bem-vindo ao DEVinBank! O que você deseja fazer hoje {Program.initialTime:dd/MM/yyyy}?\n");
             Console.WriteLine("1 - Criar uma conta");
-            Console.WriteLine("2 - Saque");
-            Console.WriteLine("3 - Depósito");
-            Console.WriteLine("4 - Transferência");
-            Console.WriteLine("5 - Verificar saldo");
-            Console.WriteLine("6 - Verificar extrato");
+            Console.WriteLine("2 - Realizar um saque");
+            Console.WriteLine("3 - Fazer um depósito");
+            Console.WriteLine("4 - Verificar saldo");
+            Console.WriteLine("5 - Verificar extrato");
+            Console.WriteLine("6 - Fazer uma tranferência");
             Console.WriteLine("7 - Listar contas DEVinBank");
             Console.WriteLine("8 - Sair");
             Console.WriteLine("\n");

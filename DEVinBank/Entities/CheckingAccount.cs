@@ -36,8 +36,9 @@ namespace DEVinBank.Entities
             transactionsLog.Add(withdrawal);
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nSaque realizado com sucesso! Seu saldo é de R${String.Format("{0:0.00}", Balance)}");
+            Console.WriteLine("\nSaque realizado com sucesso!");
             Console.ResetColor();
+            Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", Balance)}\n");
         }
     }
 }
