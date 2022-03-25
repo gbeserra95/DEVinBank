@@ -191,7 +191,7 @@ namespace DEVinBank.Entities
         }
         public static decimal? SetInitialBalance()
         {
-            return CheckCurrencyInput("Digite o saldo inicial desta conta: R$", "Renda mensal inválida!");
+            return CheckCurrencyInput("Digite o saldo inicial desta conta: R$", "Sando inicial inválido!");
         }
         public static BankAccount? GetBankAccountByAccountNumber()
         {
@@ -295,17 +295,23 @@ namespace DEVinBank.Entities
 
             Branch = branch;
             Type = type;
-            MakeDeposit(initialBalance, DateTime.Now, "Saldo inicial.");
         }
         public void MakeDeposit(decimal? amount, DateTime date, string? note)
         {
             if (amount <= 0)
             {
-                Console.WriteLine("A quantia para depósito deve ser positiva!");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nNão foi possível realizar o saque. A quantia para depósito deve ser positiva!!");
+                Console.ResetColor();
                 return;
             }
+            Balance += amount;
             var deposit = new Transaction(amount, date, note, Balance);
             transactionsLog.Add(deposit);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nDepósito realizado com sucesso! Seu saldo é de R$ {String.Format("{0:0.00}", Balance)}");
+            Console.ResetColor();
         }
 
         public virtual void MakeWithdrawal(decimal? amount, DateTime date, string? note)
@@ -331,7 +337,7 @@ namespace DEVinBank.Entities
             transactionsLog.Add(withdrawal);
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nSaque realizado com sucesso! Seu saldo é de R${Balance}");
+            Console.WriteLine($"\nSaque realizado com sucesso! Seu saldo é de R${String.Format("{0:0.00}", Balance)}");
             Console.ResetColor();
         }
 

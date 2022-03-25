@@ -34,6 +34,10 @@ namespace DEVinBank.Entities
             Balance -= amount;
             var withdrawal = new Transaction(-amount, date, note, Balance);
             transactionsLog.Add(withdrawal);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nSaque realizado com sucesso! Seu saldo é de R${String.Format("{0:0.00}", Balance)}");
+            Console.ResetColor();
         }
     }
 }

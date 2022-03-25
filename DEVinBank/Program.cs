@@ -147,6 +147,43 @@ namespace DEVinBank
                 }
                 #endregion
 
+                #region Deposit
+                if (state == 3)
+                {
+                    try
+                    {
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        if (account == null)
+                            throw new Exception();
+
+                        Console.WriteLine($"\nTitular: {account.Name}");
+                        Console.WriteLine($"CPF: {account.CPF}");
+                        Console.WriteLine($"{account.Type}: {account.AccNumber}");
+                        Console.WriteLine($"Agência: {account.Branch}");
+                        Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+
+                        decimal? amount = BankAccount.CheckCurrencyInput("Qual a quantia que você deseja depositar? R$", "Quantia inválida");
+                        if (amount == null)
+                            throw new Exception();
+
+                        Console.Write("Adicione uma descrição para essa transação: ");
+                        string? note = Console.ReadLine();
+
+                        account.MakeDeposit(amount, DateTime.Now, note);
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
                 #region List all accounts
                 if (state == 7)
                 {
