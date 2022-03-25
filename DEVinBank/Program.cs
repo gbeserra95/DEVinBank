@@ -227,6 +227,30 @@ namespace DEVinBank
                 }
                 #endregion
 
+                #region Display Account history
+                if (state == 5)
+                {
+                    try
+                    {
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        if (account == null)
+                            throw new Exception();
+
+                        Console.WriteLine(account.ListAccountHistory());
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
                 #region List all accounts
                 if (state == 7)
                 {

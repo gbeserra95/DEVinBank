@@ -260,18 +260,6 @@ namespace DEVinBank.Entities
 
             return accountsReport.ToString();
         }
-        public static string ShowAccountHistory()
-        {
-            var historyReport = new System.Text.StringBuilder();
-
-            historyReport.AppendLine("Data\t\t\tQuantidade\t\t\tSaldo\t\t\tDescrição");
-            foreach(var transaction in transactionsLog)
-            {
-                historyReport.AppendLine($"{transaction.Date.ToShortDateString()} {transaction.Date.ToShortTimeString()}\t{transaction.Amount}\t\t\t\t{transaction.CurrentBalance}\t\t\t{transaction.Note}");
-            }
-
-            return historyReport.ToString();
-        }
 
         public string? Name { get; set; }
         public string? CPF { get; }
@@ -288,13 +276,15 @@ namespace DEVinBank.Entities
             CPF = cpf;
             Address = address;
             MonthlyIncome = monthlyIncome;
-            Balance = initialBalance;
+            Balance = 0;
 
             AccNumber = accountNumberSeed.ToString();
             accountNumberSeed++;
 
             Branch = branch;
             Type = type;
+
+            MakeDeposit(initialBalance, DateTime.Now, "Saldo inicial");
         }
         public virtual void MakeWithdrawal(decimal? amount, DateTime date, string? note)
         {
@@ -315,7 +305,7 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(-amount, date, note, Balance);
+            var withdrawal = new Transaction(-amount, date, note);
             transactionsLog.Add(withdrawal);
 
             Console.ForegroundColor = ConsoleColor.Green;
@@ -334,13 +324,32 @@ namespace DEVinBank.Entities
                 return;
             }
             Balance += amount;
-            var deposit = new Transaction(amount, date, note, Balance);
+            var deposit = new Transaction(amount, date, note);
             transactionsLog.Add(deposit);
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\nDepósito realizado com sucesso!");
             Console.ResetColor();
             Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", Balance)}\n");
+        }
+
+        public string ListAccountHistory()
+        {
+            var historyReport = new System.Text.StringBuilder();
+
+            historyReport.AppendLine($"\nTitular: {Name}");
+            historyReport.AppendLine($"CPF: {CPF}");
+            historyReport.AppendLine($"{Type}: {AccNumber}");
+            historyReport.AppendLine($"Agência: {Branch}\n");
+
+            foreach (var transaction in transactionsLog)
+            {
+                historyReport.AppendLine($"{transaction.Date.ToShortDateString()} {transaction.Date.ToShortTimeString()} | {String.Format("{0:0.00}", transaction.Amount)} | {transaction.Note}");
+            }
+
+            historyReport.AppendLine($"\nO saldo atual é de R${String.Format("{0:0.00}", Balance)}.");
+
+            return historyReport.ToString();
         }
 
         public void MakeTransfer()

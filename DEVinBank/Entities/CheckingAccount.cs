@@ -32,7 +32,7 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(-amount, date, note, Balance);
+            var withdrawal = new Transaction(-amount, date, note);
             transactionsLog.Add(withdrawal);
 
             Console.ForegroundColor = ConsoleColor.Green;
