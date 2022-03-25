@@ -10,7 +10,7 @@ namespace DEVinBank.Entities
     {
         public InvestmentAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type) : base(name, cpf, address, monthlyIncome, branch, initialBalance, type)
         {
-            accountsLog.Add(this);
+            Accounts.Add(this);
         }
     }
 }

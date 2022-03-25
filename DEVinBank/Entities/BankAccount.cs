@@ -11,8 +11,8 @@ namespace DEVinBank.Entities
 {
     public class BankAccount
     {
-        protected static List<Transaction> transactionsLog = new();
-        protected static List<BankAccount> accountsLog = new();
+        protected static List<Transaction> Transactions = new();
+        protected static List<BankAccount> Accounts = new();
 
         private static int accountNumberSeed = 1;
         readonly static string[] branches = { "001 - Florianópolis", "002 - São José", "003 - Biguaçu" };
@@ -193,11 +193,11 @@ namespace DEVinBank.Entities
         {
             return CheckCurrencyInput("Digite o saldo inicial desta conta: R$", "Sando inicial inválido!");
         }
-        public static BankAccount? GetBankAccountByAccountNumber()
+        public static BankAccount? GetBankAccountByAccountNumber(int? mode)
         {
             try
             {
-                if(accountsLog.Count == 0)
+                if(Accounts.Count == 0)
                 {
                     Console.Clear();
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -210,15 +210,27 @@ namespace DEVinBank.Entities
                     return null;
                 }
 
-                Console.Clear();
-                Console.Write("Digite o número da conta: ");
+                if (mode == 0)
+                {
+                    Console.Clear();
+                    Console.Write("Digite o número da conta de origem: ");
+                }
+                else if (mode == 1)
+                {
+                    Console.Write("\nDigite o número da conta de destino: ");
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.Write("Digite o número da conta: ");
+                }
 
                 string? accountNumber = Console.ReadLine();
 
                 if (accountNumber == null)
                     throw new Exception();
 
-                BankAccount filteredAccount = accountsLog.First(account => account.AccNumber == accountNumber.Trim());
+                BankAccount filteredAccount = Accounts.First(account => account.AccNumber == accountNumber.Trim());
 
                 if (filteredAccount == null)
                 {
@@ -239,7 +251,7 @@ namespace DEVinBank.Entities
                 if (accountNumber == null)
                     return null;
 
-                BankAccount filteredAccount = (BankAccount)accountsLog.First(account => account.AccNumber == accountNumber);
+                BankAccount filteredAccount = Accounts.First(account => account.AccNumber == accountNumber.Trim());
 
                 if (filteredAccount == null)
                 {
@@ -253,7 +265,7 @@ namespace DEVinBank.Entities
         {
             var accountsReport = new System.Text.StringBuilder();
 
-            foreach(var account in accountsLog)
+            foreach(var account in Accounts)
             {
                 accountsReport.AppendLine($"Titular: {account.Name} | CPF: {account.CPF} | {account.Type}: {account.AccNumber} | Agência: {account.Branch}");
             }
@@ -305,13 +317,8 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(-amount, date, note);
-            transactionsLog.Add(withdrawal);
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nSaque realizado com sucesso!");
-            Console.ResetColor();
-            Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", Balance)}\n");
+            var withdrawal = new Transaction(AccNumber, -amount, date, note);
+            Transactions.Add(withdrawal);
         }
 
         public void MakeDeposit(decimal? amount, DateTime date, string? note)
@@ -324,17 +331,13 @@ namespace DEVinBank.Entities
                 return;
             }
             Balance += amount;
-            var deposit = new Transaction(amount, date, note);
-            transactionsLog.Add(deposit);
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nDepósito realizado com sucesso!");
-            Console.ResetColor();
-            Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", Balance)}\n");
+            var deposit = new Transaction(AccNumber, amount, date, note);
+            Transactions.Add(deposit);
         }
 
         public string ListAccountHistory()
         {
+            IEnumerable<Transaction>? transactions = Transactions.Where(transaction => transaction.AccNumber == AccNumber);
             var historyReport = new System.Text.StringBuilder();
 
             historyReport.AppendLine($"\nTitular: {Name}");
@@ -342,7 +345,7 @@ namespace DEVinBank.Entities
             historyReport.AppendLine($"{Type}: {AccNumber}");
             historyReport.AppendLine($"Agência: {Branch}\n");
 
-            foreach (var transaction in transactionsLog)
+            foreach (var transaction in transactions)
             {
                 historyReport.AppendLine($"{transaction.Date.ToShortDateString()} {transaction.Date.ToShortTimeString()} | {String.Format("{0:0.00}", transaction.Amount)} | {transaction.Note}");
             }
@@ -352,9 +355,10 @@ namespace DEVinBank.Entities
             return historyReport.ToString();
         }
 
-        public void MakeTransfer()
+        public void MakeTransferTo(BankAccount destination, decimal? amount)
         {
-
+            MakeWithdrawal(amount, DateTime.Now, $"Transferência para {destination.Name} ({destination.Type}: {destination.AccNumber}).");
+            destination.MakeDeposit(amount, DateTime.Now, $"Transferência recebida de {Name} ({Type}: {AccNumber}).");
         }
 
         public void ChangeCustomerData()

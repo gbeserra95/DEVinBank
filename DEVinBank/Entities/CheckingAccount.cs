@@ -10,7 +10,7 @@ namespace DEVinBank.Entities
     {
         public CheckingAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type) : base(name, cpf, address, monthlyIncome, branch, initialBalance, type)
         {
-            accountsLog.Add(this);
+            Accounts.Add(this);
         }
 
         public override void MakeWithdrawal(decimal? amount, DateTime date, string? note)
@@ -32,13 +32,8 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(-amount, date, note);
-            transactionsLog.Add(withdrawal);
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nSaque realizado com sucesso!");
-            Console.ResetColor();
-            Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", Balance)}\n");
+            var withdrawal = new Transaction(AccNumber, -amount, date, note);
+            Transactions.Add(withdrawal);
         }
     }
 }

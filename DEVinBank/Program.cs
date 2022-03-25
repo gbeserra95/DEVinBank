@@ -115,7 +115,7 @@ namespace DEVinBank
                 {
                     try
                     {
-                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
 
@@ -133,6 +133,11 @@ namespace DEVinBank
                         string? note = Console.ReadLine();
 
                         account.MakeWithdrawal(amount, DateTime.Now, note);
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nSaque realizado com sucesso!");
+                        Console.ResetColor();
+                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", account.Balance)}\n");
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();
@@ -152,7 +157,7 @@ namespace DEVinBank
                 {
                     try
                     {
-                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
 
@@ -170,6 +175,11 @@ namespace DEVinBank
                         string? note = Console.ReadLine();
 
                         account.MakeDeposit(amount, DateTime.Now, note);
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nDepósito realizado com sucesso!");
+                        Console.ResetColor();
+                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", account.Balance)}\n");
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();
@@ -189,7 +199,7 @@ namespace DEVinBank
                 {
                     try
                     {
-                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
 
@@ -232,11 +242,59 @@ namespace DEVinBank
                 {
                     try
                     {
-                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber();
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
 
                         Console.WriteLine(account.ListAccountHistory());
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
+                #region Transfer
+                if (state == 6)
+                {
+                    try
+                    {
+                        BankAccount? originAccount = BankAccount.GetBankAccountByAccountNumber(0);
+                        if (originAccount == null)
+                            throw new Exception();
+
+                        Console.WriteLine($"\nTitular: {originAccount.Name}");
+                        Console.WriteLine($"CPF: {originAccount.CPF}");
+                        Console.WriteLine($"{originAccount.Type}: {originAccount.AccNumber}");
+                        Console.WriteLine($"Agência: {originAccount.Branch}");
+                        Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", originAccount.Balance)}\n");
+
+                        BankAccount? destinationAccount = BankAccount.GetBankAccountByAccountNumber(1);
+                        if (destinationAccount == null)
+                            throw new Exception();
+
+                        Console.WriteLine($"\nTitular: {destinationAccount.Name}");
+                        Console.WriteLine($"CPF: {destinationAccount.CPF}");
+                        Console.WriteLine($"{destinationAccount.Type}: {destinationAccount.AccNumber}");
+                        Console.WriteLine($"Agência: {destinationAccount.Branch}\n");
+
+                        decimal? amount = BankAccount.CheckCurrencyInput("Qual a quantia que você deseja transferir? R$", "Quantia inválida");
+                        if (amount == null)
+                            throw new Exception();
+
+                        originAccount.MakeTransferTo(destinationAccount, amount);
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nTransferência realizada com sucesso!");
+                        Console.ResetColor();
+                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", originAccount.Balance)}\n");
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();
