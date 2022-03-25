@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace DEVinBank.Classes
 {
-    internal class InvestmentAccount
+    public class InvestmentAccount : BankAccount
     {
+        public InvestmentAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type) : base(name, cpf, address, monthlyIncome, branch, initialBalance, type)
+        {
+            accountsLog.Add(this);
+        }
     }
 }

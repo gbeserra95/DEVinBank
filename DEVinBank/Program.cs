@@ -35,11 +35,13 @@ namespace DEVinBank
                 }
                 #endregion
 
-                #region Create Checking Account
-                if (state == 11)
+                #region Create Checking, Savings or Investment Accounts
+                if (state == 11  || state == 12 || state == 13)
                 {
                     try
                     {
+                        BankAccount newAccount;
+
                         Console.Clear();
                         var name = BankAccount.SetCustomerName();
                         if (name == null)
@@ -65,9 +67,21 @@ namespace DEVinBank
                         if (initialBalance == null)
                             throw new Exception();
 
-                        string accountType = "Conta Corrente";
-
-                        CheckingAccount newAccount = new(name, cpf, address, monthlyIncome, branch, initialBalance, accountType);
+                        if (state == 11)
+                        {
+                            string accountType = "Conta Corrente";
+                            newAccount = new CheckingAccount(name, cpf, address, monthlyIncome, branch, initialBalance, accountType);
+                        }
+                        else if (state == 12)
+                        {
+                            string accountType = "Conta Poupança";
+                            newAccount = new SavingsAccount(name, cpf, address, monthlyIncome, branch, initialBalance, accountType);
+                        }
+                        else
+                        {
+                            string accountType = "Conta Investimento";
+                            newAccount = new InvestmentAccount(name, cpf, address, monthlyIncome, branch, initialBalance, accountType);
+                        }
 
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -95,15 +109,25 @@ namespace DEVinBank
                 }
                 #endregion
 
-                #region Create Savings Account
+                #region List all accounts
+                if (state == 7)
+                {
+                    Console.Clear();
+                    Console.WriteLine(BankAccount.ListAllAccounts());
+                    Console.WriteLine("\nPressione enter para sair...");
+                    Console.ReadLine();
+                    Console.Clear();
 
+                    state = 0;
+                }
                 #endregion
 
-                // Exit program
-                if (state == 7)
+                #region Exit program
+                if (state == 8)
                 {
                     break;
                 }
+                #endregion
             }
         }
     }

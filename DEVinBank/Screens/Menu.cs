@@ -28,7 +28,8 @@ namespace DEVinBank.Screens
             Console.WriteLine("4 - Transferência");
             Console.WriteLine("5 - Verificar saldo");
             Console.WriteLine("6 - Verificar extrato");
-            Console.WriteLine("7 - Sair");
+            Console.WriteLine("7 - Listar contas DEVinBank");
+            Console.WriteLine("8 - Sair");
             Console.WriteLine("\n");
             Console.Write("Digite a opção desejada: ");
 
@@ -36,7 +37,7 @@ namespace DEVinBank.Screens
             {
                 string? input = Console.ReadLine();
 
-                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 7, option))
+                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 8, option))
                 {
                     return option;
                 }

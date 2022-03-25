@@ -9,7 +9,7 @@ using DEVinBank.Screens;
 
 namespace DEVinBank.Classes
 {
-    public abstract class BankAccount
+    public class BankAccount
     {
         protected static List<Transaction> transactionsLog = new();
         protected static List<BankAccount> accountsLog = new();
@@ -232,10 +232,9 @@ namespace DEVinBank.Classes
         {
             var accountsReport = new System.Text.StringBuilder();
 
-            accountsReport.AppendLine("Titular\t\t\tCPF\t\tTipo de conta\t\tNúmero da conta\t\tAgência");
             foreach(var account in accountsLog)
             {
-                accountsReport.AppendLine($"{account.Name}\t\t{account.CPF}\t\t{account.Type}\t\t{account.AccNumber}\t\t{account.Branch}");
+                accountsReport.AppendLine($"Titular: {account.Name} | CPF: {account.CPF} | {account.Type}: {account.AccNumber} | Agência: {account.Branch}");
             }
 
             return accountsReport.ToString();

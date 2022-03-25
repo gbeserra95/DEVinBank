@@ -13,9 +13,11 @@ namespace DEVinBank.Classes
             accountsLog.Add(this);
         }
 
+        /*
         private static string? SimulateInterestsInMonths()
         {
 
         }
+        */
     }
 }
