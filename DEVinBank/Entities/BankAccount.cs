@@ -212,7 +212,6 @@ namespace DEVinBank.Entities
 
                 if (mode == 0)
                 {
-                    Console.Clear();
                     Console.Write("Digite o número da conta de origem: ");
                 }
                 else if (mode == 1)
@@ -221,7 +220,6 @@ namespace DEVinBank.Entities
                 }
                 else
                 {
-                    Console.Clear();
                     Console.Write("Digite o número da conta: ");
                 }
 
@@ -261,13 +259,26 @@ namespace DEVinBank.Entities
                 return filteredAccount;
             }
         }
-        public static string ListAllAccounts()
+        public static string? ListAllAccounts()
         {
+            if (Accounts.Count == 0)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Não existem contas cadastradas neste banco.");
+                Console.ResetColor();
+
+                Console.WriteLine("\nPressione enter para sair...");
+                Console.ReadLine();
+
+                return null;
+            }
+
             var accountsReport = new System.Text.StringBuilder();
 
             foreach(var account in Accounts)
             {
-                accountsReport.AppendLine($"Titular: {account.Name} | CPF: {account.CPF} | {account.Type}: {account.AccNumber} | Agência: {account.Branch}");
+                accountsReport.AppendLine($"{account.AccNumber} - Titular: {account.Name} | CPF: {account.CPF} | {account.Type} | Agência: {account.Branch}");
             }
 
             return accountsReport.ToString();
@@ -279,7 +290,7 @@ namespace DEVinBank.Entities
         public decimal? MonthlyIncome { get; set; }
         public string? AccNumber { get; private set; }
         public string? Branch { get; set; }
-        public decimal? Balance { get; set; }
+        public decimal? Balance { get; protected set; }
         public string? Type { get; set; }
 
         public BankAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type)
@@ -372,6 +383,62 @@ namespace DEVinBank.Entities
 
             destination.MakeDeposit(amount, DateTime.Now, $"Transferência recebida de {Name} ({Type}: {AccNumber}).");
             return true;
+        }
+
+        public void EditAccount()
+        {
+            int accountIndex = Accounts.FindIndex(account => account.AccNumber == AccNumber);
+
+            Accounts[accountIndex] = this;
+        }
+
+        public bool DeleteAccount()
+        {
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("ATENÇÃO! Deseja realmente excluir esta conta? (s/n) ");
+                Console.ResetColor();
+                
+                string? input = Console.ReadLine();
+
+                if (input == null)
+                    throw new Exception();
+
+                if (input.Trim().ToUpper() != "SIM" && input.Trim().ToUpper() != "S" && input.Trim().ToUpper() != "NÃO" && input.Trim().ToUpper() != "NAO" && input.Trim().ToUpper() != "N")
+                    throw new Exception();
+
+                if (input.Trim().ToUpper() == "NÃO" || input.Trim().ToUpper() == "NAO" || input.Trim().ToUpper() == "N")
+                    return false;
+
+                BankAccount filteredAccount = Accounts.First(account => account.AccNumber == AccNumber);
+                Accounts.Remove(filteredAccount);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nOpção inválida!");
+                Console.Write("Digite novamente (s/n): ");
+                Console.ResetColor();
+
+                string? input = Console.ReadLine();
+
+                if (input == null)
+                    return false;
+
+                if (input.Trim().ToUpper() != "SIM" && input.Trim().ToUpper() != "S" && input.Trim().ToUpper() != "NÃO" && input.Trim().ToUpper() != "NAO" && input.Trim().ToUpper() != "N")
+                    return false;
+
+                if (input.Trim().ToUpper() == "NÃO" || input.Trim().ToUpper() == "NAO" || input.Trim().ToUpper() == "N")
+                    return false;
+
+                BankAccount filteredAccount = Accounts.First(account => account.AccNumber == AccNumber);
+                Accounts.Remove(filteredAccount);
+
+                return true;
+            }
         }
 
         public void ChangeCustomerData()

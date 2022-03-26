@@ -30,7 +30,9 @@ namespace DEVinBank.Screens
             Console.WriteLine("5 - Verificar extrato");
             Console.WriteLine("6 - Fazer uma tranferência");
             Console.WriteLine("7 - Listar contas DEVinBank");
-            Console.WriteLine("8 - Sair");
+            Console.WriteLine("8 - Editar dados do cliente");
+            Console.WriteLine("9 - Excluir conta");
+            Console.WriteLine("10 - Sair");
             Console.WriteLine("\n");
             Console.Write("Digite a opção desejada: ");
 
@@ -38,7 +40,7 @@ namespace DEVinBank.Screens
             {
                 string? input = Console.ReadLine();
 
-                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 8, option))
+                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 10, option))
                 {
                     return option;
                 }
@@ -56,7 +58,8 @@ namespace DEVinBank.Screens
         public static int AccountMenu()
         {
             Console.Clear();
-            Console.WriteLine("Qual conta você deseja criar hoje?\n");
+            Console.WriteLine("CRIAR UMA CONTA\n");
+            Console.WriteLine("Qual conta você deseja criar hoje?");
             Console.WriteLine("1 - Conta corrente");
             Console.WriteLine("2 - Conta poupança");
             Console.WriteLine("3 - Conta investimento");

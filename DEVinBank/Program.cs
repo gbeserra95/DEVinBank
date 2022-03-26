@@ -44,6 +44,13 @@ namespace DEVinBank
                         BankAccount newAccount;
 
                         Console.Clear();
+                        if (state == 11)
+                            Console.WriteLine("CRIAR UMA CONTA CORRENTE\n");
+                        else if (state == 12)
+                            Console.WriteLine("CRIAR UMA CONTA POUPANÇA\n");
+                        else
+                            Console.WriteLine("CRIAR UMA CONTA INVESTIMENTO\n");
+
                         var name = BankAccount.SetCustomerName();
                         if (name == null)
                             throw new Exception();
@@ -115,6 +122,8 @@ namespace DEVinBank
                 {
                     try
                     {
+                        Console.Clear();
+                        Console.WriteLine("REALIZAR UM SAQUE\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -158,6 +167,8 @@ namespace DEVinBank
                 {
                     try
                     {
+                        Console.Clear();
+                        Console.WriteLine("FAZER UM DEPÓSITO\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -200,6 +211,8 @@ namespace DEVinBank
                 {
                     try
                     {
+                        Console.Clear();
+                        Console.WriteLine("VERIFICAR SALDO\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -243,6 +256,8 @@ namespace DEVinBank
                 {
                     try
                     {
+                        Console.Clear();
+                        Console.WriteLine("VERIFICAR EXTRATO\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -280,6 +295,7 @@ namespace DEVinBank
                             throw new Exception();
                         }
 
+                        Console.WriteLine("FAZER UMA TRASNFERÊNCIA\n");
                         BankAccount? originAccount = BankAccount.GetBankAccountByAccountNumber(0);
                         if (originAccount == null)
                             throw new Exception();
@@ -340,18 +356,167 @@ namespace DEVinBank
                 #region List all accounts
                 if (state == 7)
                 {
-                    Console.Clear();
-                    Console.WriteLine(BankAccount.ListAllAccounts());
-                    Console.WriteLine("\nPressione enter para sair...");
-                    Console.ReadLine();
-                    Console.Clear();
+                    try
+                    {
+                        if (BankAccount.ListAllAccounts() == null)
+                            throw new Exception();
 
-                    state = 0;
+                        Console.Clear();
+                        Console.WriteLine("LISTAR CONTAS DEVINBANK\n");
+                        Console.WriteLine(BankAccount.ListAllAccounts());
+                        Console.WriteLine("\nPressione enter para sair...");
+                        Console.ReadLine();
+                        Console.Clear();
+
+                        state = 0;
+                    }
+                    catch(Exception)
+                    {
+                        state = -1;
+                    }
+
+                }
+                #endregion
+
+                #region Edit Customer Information
+                if (state == 8)
+                {
+                    try
+                    {
+                        Console.Clear();
+                        Console.WriteLine("EDITAR DADOS DO CLIENTE\n");
+
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
+                        if (account == null)
+                            throw new Exception();
+
+                        Console.WriteLine($"\nTitular: {account.Name}");
+                        Console.WriteLine($"CPF: {account.CPF}");
+                        Console.WriteLine($"Endereço: {account.Address}");
+                        Console.WriteLine($"Renda mensal: R${account.MonthlyIncome}");
+                        Console.WriteLine($"Agência: {account.Branch}");
+                        Console.WriteLine($"{account.Type}: {account.AccNumber}");
+                        if (account.Balance > 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else if (account.Balance < 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                        }
+
+                        var name = BankAccount.SetCustomerName();
+                        if (name == null)
+                            throw new Exception();
+
+                        var address = BankAccount.SetCustomerAddress();
+                        if (address == null)
+                            throw new Exception();
+
+                        var monthlyIncome = BankAccount.SetCustomerMonthlyIncome();
+                        if (monthlyIncome == null)
+                            throw new Exception();
+
+                        account.Name = name;
+                        account.Address = address;
+                        account.MonthlyIncome = monthlyIncome;
+
+                        account.EditAccount();
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nDados alterados com sucesso!\n");
+                        Console.ResetColor();
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
+                #region Delete Account
+                if (state == 9)
+                {
+                    try
+                    {
+                        Console.Clear();
+                        Console.WriteLine("DELETAR CONTA\n");
+
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
+                        if (account == null)
+                            throw new Exception();
+
+                        Console.WriteLine($"\nTitular: {account.Name}");
+                        Console.WriteLine($"CPF: {account.CPF}");
+                        Console.WriteLine($"Endereço: {account.Address}");
+                        Console.WriteLine($"Renda mensal: R${account.MonthlyIncome}");
+                        Console.WriteLine($"Agência: {account.Branch}");
+                        Console.WriteLine($"{account.Type}: {account.AccNumber}");
+                        if (account.Balance > 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else if (account.Balance < 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                        }
+
+                        if (account.Balance != 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Seu saldo deve ser 0 para realizar a exclusão da conta.\n");
+                            Console.ResetColor();
+
+                            Console.WriteLine("Pressione enter para sair...");
+                            Console.ReadLine();
+
+                            throw new Exception();
+                        }
+
+                        if (!account.DeleteAccount())
+                            throw new Exception();
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Conta excluída com sucesso!\n");
+                        Console.ResetColor();
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
                 }
                 #endregion
 
                 #region Exit program
-                if (state == 8)
+                if (state == 10)
                 {
                     break;
                 }
