@@ -29,10 +29,11 @@ namespace DEVinBank.Screens
             Console.WriteLine("4 - Verificar saldo");
             Console.WriteLine("5 - Verificar extrato");
             Console.WriteLine("6 - Fazer uma tranferência");
-            Console.WriteLine("7 - Listar contas DEVinBank");
-            Console.WriteLine("8 - Editar dados do cliente");
-            Console.WriteLine("9 - Excluir conta");
-            Console.WriteLine("10 - Sair");
+            Console.WriteLine("7 - Simular Rentabilidade da Conta Poupança");
+            Console.WriteLine("8 - Listar contas DEVinBank");
+            Console.WriteLine("9 - Editar dados do cliente");
+            Console.WriteLine("10 - Excluir conta");
+            Console.WriteLine("11 - Sair");
             Console.WriteLine("\n");
             Console.Write("Digite a opção desejada: ");
 
@@ -40,7 +41,7 @@ namespace DEVinBank.Screens
             {
                 string? input = Console.ReadLine();
 
-                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 10, option))
+                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 11, option))
                 {
                     return option;
                 }
@@ -58,7 +59,7 @@ namespace DEVinBank.Screens
         public static int AccountMenu()
         {
             Console.Clear();
-            Console.WriteLine("CRIAR UMA CONTA\n");
+            Console.WriteLine("Criar uma conta\n");
             Console.WriteLine("Qual conta você deseja criar hoje?");
             Console.WriteLine("1 - Conta corrente");
             Console.WriteLine("2 - Conta poupança");
@@ -72,7 +73,7 @@ namespace DEVinBank.Screens
 
                 if (Int32.TryParse(input, out int option) && CheckInputRange(1, 3, option))
                 {
-                    return 10 + option;
+                    return 100 + option;
                 }
                 else
                 {
@@ -90,7 +91,7 @@ namespace DEVinBank.Screens
 
                 if (Int32.TryParse(input, out int option) && CheckInputRange(1, 3, option))
                 {
-                    return 10 + option;
+                    return 100 + option;
                 }
 
                 return -1;

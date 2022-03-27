@@ -441,10 +441,6 @@ namespace DEVinBank.Entities
             }
         }
 
-        public void ChangeCustomerData()
-        {
-
-        }
     }
              
 }

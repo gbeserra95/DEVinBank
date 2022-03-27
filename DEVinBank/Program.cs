@@ -37,19 +37,19 @@ namespace DEVinBank
                 #endregion
 
                 #region Create Checking, Savings or Investment Accounts
-                if (state == 11  || state == 12 || state == 13)
+                if (state == 101  || state == 102 || state == 103)
                 {
                     try
                     {
                         BankAccount newAccount;
 
                         Console.Clear();
-                        if (state == 11)
-                            Console.WriteLine("CRIAR UMA CONTA CORRENTE\n");
-                        else if (state == 12)
-                            Console.WriteLine("CRIAR UMA CONTA POUPANÇA\n");
+                        if (state == 101)
+                            Console.WriteLine("Criar uma conta corrente\n");
+                        else if (state == 102)
+                            Console.WriteLine("Criar uma conta poupança\n");
                         else
-                            Console.WriteLine("CRIAR UMA CONTA INVESTIMENTO\n");
+                            Console.WriteLine("Criar uma conta investimento\n");
 
                         var name = BankAccount.SetCustomerName();
                         if (name == null)
@@ -75,12 +75,12 @@ namespace DEVinBank
                         if (initialBalance == null)
                             throw new Exception();
 
-                        if (state == 11)
+                        if (state == 101)
                         {
                             string accountType = "Conta Corrente";
                             newAccount = new CheckingAccount(name, cpf, address, monthlyIncome, branch, initialBalance, accountType);
                         }
-                        else if (state == 12)
+                        else if (state == 102)
                         {
                             string accountType = "Conta Poupança";
                             newAccount = new SavingsAccount(name, cpf, address, monthlyIncome, branch, initialBalance, accountType);
@@ -123,7 +123,7 @@ namespace DEVinBank
                     try
                     {
                         Console.Clear();
-                        Console.WriteLine("REALIZAR UM SAQUE\n");
+                        Console.WriteLine("Realizar um saque\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -168,7 +168,7 @@ namespace DEVinBank
                     try
                     {
                         Console.Clear();
-                        Console.WriteLine("FAZER UM DEPÓSITO\n");
+                        Console.WriteLine("Fazer um depósito\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -212,7 +212,7 @@ namespace DEVinBank
                     try
                     {
                         Console.Clear();
-                        Console.WriteLine("VERIFICAR SALDO\n");
+                        Console.WriteLine("Verificar saldo\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -257,7 +257,7 @@ namespace DEVinBank
                     try
                     {
                         Console.Clear();
-                        Console.WriteLine("VERIFICAR EXTRATO\n");
+                        Console.WriteLine("Verificar extrato\n");
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
                             throw new Exception();
@@ -295,7 +295,7 @@ namespace DEVinBank
                             throw new Exception();
                         }
 
-                        Console.WriteLine("FAZER UMA TRASNFERÊNCIA\n");
+                        Console.WriteLine("Fazer uma transferência\n");
                         BankAccount? originAccount = BankAccount.GetBankAccountByAccountNumber(0);
                         if (originAccount == null)
                             throw new Exception();
@@ -353,8 +353,71 @@ namespace DEVinBank
                 }
                 #endregion
 
-                #region List all accounts
+                #region Simulate Savings Account Interest
                 if (state == 7)
+                {
+                    try
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Simular Rentabilidade da Conta Poupança\n");
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
+
+                        if (account == null)
+                            throw new Exception();
+
+                        if (account.Type != "Conta Poupança")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Esta conta não é do tipo poupança.\n");
+                            Console.ResetColor();
+
+                            Console.WriteLine("Pressione enter para sair...");
+                            Console.ReadLine();
+
+                            throw new Exception();
+                        }
+
+                        Console.WriteLine($"\nTitular: {account.Name}");
+                        Console.WriteLine($"CPF: {account.CPF}");
+                        Console.WriteLine($"{account.Type}: {account.AccNumber}");
+                        Console.WriteLine($"Agência: {account.Branch}");
+                        if (account.Balance > 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else if (account.Balance < 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                        }
+
+                        SavingsAccount savingAccount = (SavingsAccount)account;
+
+                        if(!savingAccount.SimulateAccountInterest())
+                            throw new Exception();
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
+                #region List all accounts
+                if (state == 8)
                 {
                     try
                     {
@@ -379,7 +442,7 @@ namespace DEVinBank
                 #endregion
 
                 #region Edit Customer Information
-                if (state == 8)
+                if (state == 9)
                 {
                     try
                     {
@@ -449,7 +512,7 @@ namespace DEVinBank
                 #endregion
 
                 #region Delete Account
-                if (state == 9)
+                if (state == 10)
                 {
                     try
                     {
@@ -516,7 +579,7 @@ namespace DEVinBank
                 #endregion
 
                 #region Exit program
-                if (state == 10)
+                if (state == 11)
                 {
                     break;
                 }
