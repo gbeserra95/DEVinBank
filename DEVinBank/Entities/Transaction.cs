@@ -10,14 +10,16 @@ namespace DEVinBank.Entities
     {
         public string? AccNumber { get; }
         public decimal? Amount { get; }
-        public DateTime Date { get; }
+        public string Date { get; }
+        public string Time { get; }
         public string? Note { get; }
 
-        public Transaction(string? accountNumber, decimal? amount, DateTime date, string? note)
+        public Transaction(string? accountNumber, decimal? amount, string date, string time, string? note)
         {
             AccNumber = accountNumber;
             Amount = amount;
             Date = date;
+            Time = time;
             Note = note;
         }
     }

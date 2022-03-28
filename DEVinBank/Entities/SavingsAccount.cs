@@ -87,7 +87,7 @@ namespace DEVinBank.Entities
                 decimal? agregatedBalance = Balance * (1 + (months * monthRate) / 100);
                                 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"\nEm {months} meses(s), com rentabilidade de {yearRate}% a.a., você possuirá um saldo de R${String.Format("{0:0.00}", Decimal.Round(Convert.ToDecimal(agregatedBalance), 2))}.\n");
+                Console.WriteLine($"\nEm {months} meses(s), com rentabilidade de {yearRate}% a.a., você possuirá um saldo de R${String.Format("{0:#,0.00}", Decimal.Round(Convert.ToDecimal(agregatedBalance), 2))}.\n");
                 Console.ResetColor();
 
                 return true;
@@ -131,7 +131,7 @@ namespace DEVinBank.Entities
                     simulatedBalance += agregatedBalance;
                 }
 
-                Console.WriteLine($"Em {months} meses(s), com rentabilidade de {rate}% a.a., você possuirá um saldo de R${String.Format("{0:0.00}", Decimal.Round(Convert.ToDecimal(simulatedBalance), 2))}");
+                Console.WriteLine($"Em {months} meses(s), com rentabilidade de {rate}% a.a., você possuirá um saldo de R${String.Format("{0:#,0.00}", Decimal.Round(Convert.ToDecimal(simulatedBalance), 2))}");
 
                 return true;
             }

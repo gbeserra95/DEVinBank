@@ -17,6 +17,52 @@ namespace DEVinBank.Entities
         private static int accountNumberSeed = 1;
         readonly static string[] branches = { "001 - Florianópolis", "002 - São José", "003 - Biguaçu" };
 
+        public static (string name, decimal rate, int requiredMonths) LCI = ("LCI", 8m, 6);
+        public static (string name, decimal rate, int requiredMonths) LCA = ("LCA", 9m, 12);
+        public static (string name, decimal rate, int requiredMonths) CDB = ("CDB", 10m, 36);
+
+        public static bool YesOrNoAnswer(string message)
+        {
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($"{message} (s/n)? ");
+                Console.ResetColor();
+
+                string? input = Console.ReadLine();
+
+                if (input == null)
+                    throw new Exception();
+
+                if (input.Trim().ToUpper() != "SIM" && input.Trim().ToUpper() != "S" && input.Trim().ToUpper() != "NÃO" && input.Trim().ToUpper() != "NAO" && input.Trim().ToUpper() != "N")
+                    throw new Exception();
+
+                if (input.Trim().ToUpper() == "NÃO" || input.Trim().ToUpper() == "NAO" || input.Trim().ToUpper() == "N")
+                    return false;
+
+                return true;
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nOpção inválida!");
+                Console.Write("Digite novamente (s/n): ");
+                Console.ResetColor();
+
+                string? input = Console.ReadLine();
+
+                if (input == null)
+                    return false;
+
+                if (input.Trim().ToUpper() != "SIM" && input.Trim().ToUpper() != "S" && input.Trim().ToUpper() != "NÃO" && input.Trim().ToUpper() != "NAO" && input.Trim().ToUpper() != "N")
+                    return false;
+
+                if (input.Trim().ToUpper() == "NÃO" || input.Trim().ToUpper() == "NAO" || input.Trim().ToUpper() == "N")
+                    return false;
+
+                return true;
+            }
+        }
         public static decimal? CheckCurrencyInput(string instructionMessage, string errorMessage)
         {
             Console.Write(instructionMessage);
@@ -307,9 +353,9 @@ namespace DEVinBank.Entities
             Branch = branch;
             Type = type;
 
-            MakeDeposit(initialBalance, DateTime.Now, "Saldo inicial.");
+            MakeDeposit(initialBalance, Program.systemTime, DateTime.Now, "Saldo inicial.");
         }
-        public virtual bool MakeWithdrawal(decimal? amount, DateTime date, string? note)
+        public virtual bool MakeWithdrawal(decimal? amount, DateTime date, DateTime time, string? note)
         {
             if (amount <= 0)
             {
@@ -336,13 +382,12 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(AccNumber, -amount, date, note);
+            var withdrawal = new Transaction(AccNumber, -amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
             Transactions.Add(withdrawal);
 
             return true;
         }
-
-        public void MakeDeposit(decimal? amount, DateTime date, string? note)
+        public void MakeDeposit(decimal? amount, DateTime date, DateTime time, string? note)
         {
             if (amount <= 0)
             {
@@ -352,10 +397,9 @@ namespace DEVinBank.Entities
                 return;
             }
             Balance += amount;
-            var deposit = new Transaction(AccNumber, amount, date, note);
+            var deposit = new Transaction(AccNumber, amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
             Transactions.Add(deposit);
         }
-
         public string ListAccountHistory()
         {
             IEnumerable<Transaction>? transactions = Transactions.Where(transaction => transaction.AccNumber == AccNumber);
@@ -368,77 +412,40 @@ namespace DEVinBank.Entities
 
             foreach (var transaction in transactions)
             {
-                historyReport.AppendLine($"{transaction.Date.ToShortDateString()} {transaction.Date.ToShortTimeString()} | {String.Format("{0:0.00}", transaction.Amount)} | {transaction.Note}");
+                historyReport.AppendLine($"{transaction.Date} {transaction.Time} | {String.Format("{0:#,0.00}", transaction.Amount)} | {transaction.Note}");
             }
 
-            historyReport.AppendLine($"\nO saldo atual é de R${String.Format("{0:0.00}", Balance)}.");
+            historyReport.AppendLine($"\nO saldo atual é de R${String.Format("{0:#,0.00}", Balance)}.");
 
             return historyReport.ToString();
         }
-
         public bool MakeTransferTo(BankAccount destination, decimal? amount)
         {
-            if (!MakeWithdrawal(amount, DateTime.Now, $"Transferência para {destination.Name} ({destination.Type}: {destination.AccNumber})."))
+            if (!MakeWithdrawal(amount, Program.systemTime, DateTime.Now, $"Transferência para {destination.Name} ({destination.Type}: {destination.AccNumber})."))
                 return false;
 
-            destination.MakeDeposit(amount, DateTime.Now, $"Transferência recebida de {Name} ({Type}: {AccNumber}).");
+            destination.MakeDeposit(amount, Program.systemTime, DateTime.Now, $"Transferência recebida de {Name} ({Type}: {AccNumber}).");
             return true;
         }
-
         public void EditAccount()
         {
             int accountIndex = Accounts.FindIndex(account => account.AccNumber == AccNumber);
 
             Accounts[accountIndex] = this;
         }
-
         public bool DeleteAccount()
         {
-            try
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("ATENÇÃO! Deseja realmente excluir esta conta? (s/n) ");
-                Console.ResetColor();
-                
-                string? input = Console.ReadLine();
+            if (!YesOrNoAnswer("ATENÇÃO! Deseja realmente excluir esta conta"))
+                return false;
 
-                if (input == null)
-                    throw new Exception();
+            BankAccount filteredAccount = Accounts.First(account => account.AccNumber == AccNumber);
+            Accounts.Remove(filteredAccount);
 
-                if (input.Trim().ToUpper() != "SIM" && input.Trim().ToUpper() != "S" && input.Trim().ToUpper() != "NÃO" && input.Trim().ToUpper() != "NAO" && input.Trim().ToUpper() != "N")
-                    throw new Exception();
+            return true;
+        }
+        public virtual void PerformSixMonthsAdvance()
+        {
 
-                if (input.Trim().ToUpper() == "NÃO" || input.Trim().ToUpper() == "NAO" || input.Trim().ToUpper() == "N")
-                    return false;
-
-                BankAccount filteredAccount = Accounts.First(account => account.AccNumber == AccNumber);
-                Accounts.Remove(filteredAccount);
-
-                return true;
-            }
-            catch (Exception)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nOpção inválida!");
-                Console.Write("Digite novamente (s/n): ");
-                Console.ResetColor();
-
-                string? input = Console.ReadLine();
-
-                if (input == null)
-                    return false;
-
-                if (input.Trim().ToUpper() != "SIM" && input.Trim().ToUpper() != "S" && input.Trim().ToUpper() != "NÃO" && input.Trim().ToUpper() != "NAO" && input.Trim().ToUpper() != "N")
-                    return false;
-
-                if (input.Trim().ToUpper() == "NÃO" || input.Trim().ToUpper() == "NAO" || input.Trim().ToUpper() == "N")
-                    return false;
-
-                BankAccount filteredAccount = Accounts.First(account => account.AccNumber == AccNumber);
-                Accounts.Remove(filteredAccount);
-
-                return true;
-            }
         }
 
     }

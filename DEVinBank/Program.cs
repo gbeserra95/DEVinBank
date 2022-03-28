@@ -6,7 +6,7 @@ namespace DEVinBank
 {
     class Program
     {
-        public static DateTime initialTime = DateTime.Now;
+        public static DateTime systemTime = DateTime.Now;
         static private void Main()
         {
             int state = 0;
@@ -98,11 +98,11 @@ namespace DEVinBank
                         Console.WriteLine($"Titular: {newAccount.Name}");
                         Console.WriteLine($"CPF: {newAccount.CPF}");
                         Console.WriteLine($"Endereço: {newAccount.Address}");
-                        Console.WriteLine($"Renda mensal: R${String.Format("{0:0.00}", newAccount.MonthlyIncome)}\n");
+                        Console.WriteLine($"Renda mensal: R${String.Format("{0:#,0.00}", newAccount.MonthlyIncome)}\n");
                         Console.WriteLine($"Tipo de conta: {newAccount.Type}");
                         Console.WriteLine($"Número da conta: {newAccount.AccNumber}");
                         Console.WriteLine($"Agência: {newAccount.Branch}");
-                        Console.WriteLine($"Saldo Inicial: R${String.Format("{0:0.00}", newAccount.Balance)}\n");
+                        Console.WriteLine($"Saldo Inicial: R${String.Format("{0:#,0.00}", newAccount.Balance)}\n");
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();
@@ -132,7 +132,7 @@ namespace DEVinBank
                         Console.WriteLine($"CPF: {account.CPF}");
                         Console.WriteLine($"{account.Type}: {account.AccNumber}");
                         Console.WriteLine($"Agência: {account.Branch}");
-                        Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                        Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
 
                         decimal? amount = BankAccount.CheckCurrencyInput("Qual a quantia que você deseja sacar? R$", "Quantia inválida");
                         if (amount == null)
@@ -141,13 +141,13 @@ namespace DEVinBank
                         Console.Write("Adicione uma descrição para essa transação: ");
                         string? note = Console.ReadLine();
 
-                        if (!account.MakeWithdrawal(amount, DateTime.Now, note))
+                        if (!account.MakeWithdrawal(amount, Program.systemTime, DateTime.Now, note))
                             throw new Exception();
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nSaque realizado com sucesso!");
                         Console.ResetColor();
-                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", account.Balance)}\n");
+                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:#,0.00}", account.Balance)}\n");
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();
@@ -177,7 +177,7 @@ namespace DEVinBank
                         Console.WriteLine($"CPF: {account.CPF}");
                         Console.WriteLine($"{account.Type}: {account.AccNumber}");
                         Console.WriteLine($"Agência: {account.Branch}");
-                        Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                        Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
 
                         decimal? amount = BankAccount.CheckCurrencyInput("Qual a quantia que você deseja depositar? R$", "Quantia inválida");
                         if (amount == null)
@@ -186,12 +186,12 @@ namespace DEVinBank
                         Console.Write("Adicione uma descrição para essa transação: ");
                         string? note = Console.ReadLine();
 
-                        account.MakeDeposit(amount, DateTime.Now, note);
+                        account.MakeDeposit(amount, Program.systemTime, DateTime.Now, note);
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nDepósito realizado com sucesso!");
                         Console.ResetColor();
-                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", account.Balance)}\n");
+                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:#,0.00}", account.Balance)}\n");
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();
@@ -224,18 +224,18 @@ namespace DEVinBank
                         if (account.Balance > 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else if (account.Balance < 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                         }
 
                         Console.WriteLine("Pressione enter para sair...");
@@ -282,7 +282,7 @@ namespace DEVinBank
                 {
                     try
                     {
-                        if (initialTime.DayOfWeek == DayOfWeek.Saturday || initialTime.DayOfWeek == DayOfWeek.Saturday)
+                        if (systemTime.DayOfWeek == DayOfWeek.Saturday || systemTime.DayOfWeek == DayOfWeek.Saturday)
                         {
                             Console.Clear();
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -304,7 +304,7 @@ namespace DEVinBank
                         Console.WriteLine($"CPF: {originAccount.CPF}");
                         Console.WriteLine($"{originAccount.Type}: {originAccount.AccNumber}");
                         Console.WriteLine($"Agência: {originAccount.Branch}");
-                        Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", originAccount.Balance)}\n");
+                        Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", originAccount.Balance)}\n");
 
                         BankAccount? destinationAccount = BankAccount.GetBankAccountByAccountNumber(1);
 
@@ -338,7 +338,7 @@ namespace DEVinBank
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nTransferência realizada com sucesso!");
                         Console.ResetColor();
-                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:0.00}", originAccount.Balance)}\n");
+                        Console.WriteLine($"Seu saldo é de R${String.Format("{0:#,0.00}", originAccount.Balance)}\n");
 
                         Console.WriteLine("Pressione enter para sair...");
                         Console.ReadLine();
@@ -384,18 +384,18 @@ namespace DEVinBank
                         if (account.Balance > 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else if (account.Balance < 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                         }
 
                         SavingsAccount savingAccount = (SavingsAccount)account;
@@ -416,8 +416,84 @@ namespace DEVinBank
                 }
                 #endregion
 
-                #region List all accounts
+                #region Show Ivestment Menu
                 if (state == 8)
+                {
+                    state = Menu.InvestmentMenu();
+                }
+                #endregion
+
+                #region Make an investment
+                if (state == 801 || state == 802 || state == 803)
+                {
+                    try
+                    {
+
+                        Console.Clear();
+                        if (state == 801)
+                            Console.WriteLine($"LCI {BankAccount.LCI.rate}% a.a. - tempo mínimo de aplicação: {BankAccount.LCI.requiredMonths} meses\n");
+                        else if (state == 802)
+                            Console.WriteLine($"LCA {BankAccount.LCA.rate}% a.a. - tempo mínimo de aplicação: {BankAccount.LCA.requiredMonths} meses\n");
+                        else
+                            Console.WriteLine($"3 - CDB {BankAccount.CDB.rate}% a.a. - tempo mínimo de aplicação: {BankAccount.CDB.requiredMonths} meses\n");
+
+                        BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
+
+                        if (account == null)
+                            throw new Exception();
+
+                        if (account.Type != "Conta Investimento")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Esta conta não é do tipo investimento.\n");
+                            Console.ResetColor();
+
+                            Console.WriteLine("Pressione enter para sair...");
+                            Console.ReadLine();
+
+                            throw new Exception();
+                        }
+
+                        if (account.Balance <= 0)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Você não possui fundos suficientes para fazer um investimento.\n");
+                            Console.ResetColor();
+
+                            Console.WriteLine("Pressione enter para sair...");
+                            Console.ReadLine();
+
+                            throw new Exception();
+                        }
+
+                        Console.WriteLine($"\nTitular: {account.Name}");
+                        Console.WriteLine($"CPF: {account.CPF}");
+                        Console.WriteLine($"{account.Type}: {account.AccNumber}");
+                        Console.WriteLine($"Agência: {account.Branch}");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
+                        Console.ResetColor();
+
+                        InvestmentAccount investmentAccount = (InvestmentAccount) account;
+
+                        if (!investmentAccount.MakeInvestment(state))
+                            throw new Exception();
+
+                        Console.WriteLine("Pressione enter para sair...");
+                        Console.ReadLine();
+
+                        Console.Clear();
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
+                #region List all accounts
+                if (state == 9)
                 {
                     try
                     {
@@ -442,7 +518,7 @@ namespace DEVinBank
                 #endregion
 
                 #region Edit Customer Information
-                if (state == 9)
+                if (state == 10)
                 {
                     try
                     {
@@ -462,18 +538,18 @@ namespace DEVinBank
                         if (account.Balance > 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else if (account.Balance < 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                         }
 
                         var name = BankAccount.SetCustomerName();
@@ -512,7 +588,7 @@ namespace DEVinBank
                 #endregion
 
                 #region Delete Account
-                if (state == 10)
+                if (state == 11)
                 {
                     try
                     {
@@ -532,18 +608,18 @@ namespace DEVinBank
                         if (account.Balance > 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else if (account.Balance < 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                             Console.ResetColor();
                         }
                         else
                         {
-                            Console.WriteLine($"Saldo: R${String.Format("{0:0.00}", account.Balance)}\n");
+                            Console.WriteLine($"Saldo: R${String.Format("{0:#,0.00}", account.Balance)}\n");
                         }
 
                         if (account.Balance != 0)
@@ -579,7 +655,7 @@ namespace DEVinBank
                 #endregion
 
                 #region Exit program
-                if (state == 11)
+                if (state == 12)
                 {
                     break;
                 }

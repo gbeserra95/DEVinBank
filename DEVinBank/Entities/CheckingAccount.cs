@@ -13,7 +13,7 @@ namespace DEVinBank.Entities
             Accounts.Add(this);
         }
 
-        public override bool MakeWithdrawal(decimal? amount, DateTime date, string? note)
+        public override bool MakeWithdrawal(decimal? amount, DateTime date, DateTime time, string? note)
         {
             if (amount <= 0)
             {
@@ -40,7 +40,7 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(AccNumber, -amount, date, note);
+            var withdrawal = new Transaction(AccNumber, -amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
             Transactions.Add(withdrawal);
 
             return true;
