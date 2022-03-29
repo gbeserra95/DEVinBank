@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DEVinBank.Enums;
 
 namespace DEVinBank.Entities
 {
@@ -13,7 +14,7 @@ namespace DEVinBank.Entities
             Accounts.Add(this);
         }
 
-        public override bool MakeWithdrawal(decimal? amount, DateTime date, DateTime time, string? note)
+        public override bool MakeWithdrawal(decimal? amount, DateTime date, DateTime time, TransactionType type, string? note)
         {
             if (amount <= 0)
             {
@@ -40,7 +41,7 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(AccNumber, -amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
+            var withdrawal = new Transaction(this, type, -amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
             Transactions.Add(withdrawal);
 
             return true;

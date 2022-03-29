@@ -33,9 +33,13 @@ namespace DEVinBank.Screens
             Console.WriteLine("7 - Simular Rentabilidade da Conta Poupança");
             Console.WriteLine("8 - Fazer um investimento");
             Console.WriteLine("9 - Listar contas DEVinBank");
-            Console.WriteLine("10 - Editar dados do cliente");
-            Console.WriteLine("11 - Excluir conta");
-            Console.WriteLine("12 - Sair");
+            Console.WriteLine("10 - Listar todas as transferências");
+            Console.WriteLine("11 - Listar contas com saldo negativo");
+            Console.WriteLine("12 - Verificar valor total dos investimentos DEVinBank");
+            Console.WriteLine("13 - Editar dados do cliente");
+            Console.WriteLine("14 - Excluir conta");
+            Console.WriteLine("15 - Adianta data do sistema em 6 meses");
+            Console.WriteLine("16 - Sair");
             Console.WriteLine("\n");
             Console.Write("Digite a opção desejada: ");
 
@@ -43,7 +47,7 @@ namespace DEVinBank.Screens
             {
                 string? input = Console.ReadLine();
 
-                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 12, option))
+                if (Int32.TryParse(input, out int option) && CheckInputRange(1, 16, option))
                 {
                     return option;
                 }

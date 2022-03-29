@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DEVinBank.Validations;
 using DEVinBank.Screens;
+using DEVinBank.Enums;
 
 namespace DEVinBank.Entities
 {
@@ -353,9 +354,9 @@ namespace DEVinBank.Entities
             Branch = branch;
             Type = type;
 
-            MakeDeposit(initialBalance, Program.systemTime, DateTime.Now, "Saldo inicial.");
+            MakeDeposit(initialBalance, Program.systemTime, DateTime.Now, TransactionType.Depósito, "Saldo inicial.");
         }
-        public virtual bool MakeWithdrawal(decimal? amount, DateTime date, DateTime time, string? note)
+        public virtual bool MakeWithdrawal(decimal? amount, DateTime date, DateTime time, TransactionType type, string? note)
         {
             if (amount <= 0)
             {
@@ -382,12 +383,12 @@ namespace DEVinBank.Entities
             }
 
             Balance -= amount;
-            var withdrawal = new Transaction(AccNumber, -amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
+            var withdrawal = new Transaction(this, type, -amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
             Transactions.Add(withdrawal);
 
             return true;
         }
-        public void MakeDeposit(decimal? amount, DateTime date, DateTime time, string? note)
+        public void MakeDeposit(decimal? amount, DateTime date, DateTime time, TransactionType type, string? note)
         {
             if (amount <= 0)
             {
@@ -397,12 +398,12 @@ namespace DEVinBank.Entities
                 return;
             }
             Balance += amount;
-            var deposit = new Transaction(AccNumber, amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
+            var deposit = new Transaction(this, type, amount, date.ToString("dd/MM/yyyy"), time.ToString("HH:mm:ss"), note);
             Transactions.Add(deposit);
         }
         public string ListAccountHistory()
         {
-            IEnumerable<Transaction>? transactions = Transactions.Where(transaction => transaction.AccNumber == AccNumber);
+            IEnumerable<Transaction>? transactions = Transactions.Where(transaction => transaction.Account.AccNumber == AccNumber);
             var historyReport = new System.Text.StringBuilder();
 
             historyReport.AppendLine($"\nTitular: {Name}");
@@ -412,7 +413,7 @@ namespace DEVinBank.Entities
 
             foreach (var transaction in transactions)
             {
-                historyReport.AppendLine($"{transaction.Date} {transaction.Time} | {String.Format("{0:#,0.00}", transaction.Amount)} | {transaction.Note}");
+                historyReport.AppendLine($"{transaction.Date} {transaction.Time} | {transaction.Type} | {String.Format("{0:#,0.00}", transaction.Amount)} | {transaction.Note}");
             }
 
             historyReport.AppendLine($"\nO saldo atual é de R${String.Format("{0:#,0.00}", Balance)}.");
@@ -421,10 +422,60 @@ namespace DEVinBank.Entities
         }
         public bool MakeTransferTo(BankAccount destination, decimal? amount)
         {
-            if (!MakeWithdrawal(amount, Program.systemTime, DateTime.Now, $"Transferência para {destination.Name} ({destination.Type}: {destination.AccNumber})."))
+            if (!MakeWithdrawal(amount, Program.systemTime, DateTime.Now, TransactionType.Transferência, $"Transferência para {destination.Name} ({destination.Type}: {destination.AccNumber})."))
                 return false;
 
-            destination.MakeDeposit(amount, Program.systemTime, DateTime.Now, $"Transferência recebida de {Name} ({Type}: {AccNumber}).");
+            destination.MakeDeposit(amount, Program.systemTime, DateTime.Now, TransactionType.Transferência, $"Transferência recebida de {Name} ({Type}: {AccNumber}).");
+            return true;
+        }
+        public static bool ListTransfers()
+        {
+            if(Transactions.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nAinda não existem transações neste banco.\n");
+                Console.ResetColor();
+
+                Console.WriteLine("\nPressione enter para sair...");
+                Console.ReadLine();
+
+                return false;
+            }
+
+            foreach (Transaction transaction in Transactions)
+                Console.WriteLine($"{transaction.Date} {transaction.Time} | {transaction.Type} | {transaction.Account.Type} {transaction.Account.AccNumber} - {transaction.Account.Name} - CPF: {transaction.Account.CPF} | R${String.Format("{0:#,0.00}", transaction.Amount)} | {transaction.Note}");
+
+            return true;
+        }
+        public static bool ListNegativeAccounts()
+        {
+            Console.Clear();
+
+            Console.WriteLine("Contas Negativas:\n");
+
+            IEnumerable<BankAccount> negativeAccounts = Accounts.Where(account => account.Balance < 0);
+            
+            if(!negativeAccounts.Any())
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nNão existem contas negativas neste banco.");
+                Console.ResetColor();
+
+                Console.WriteLine("\nPressione enter para sair...");
+                Console.ReadLine();
+
+                return false;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            foreach (var account in negativeAccounts)
+            {
+                Console.WriteLine($"{account.AccNumber} | {account.Name} - CPF: {account.CPF} | {account.Type} | Agência: {account.Branch} | Saldo: {account.Balance}");
+            }
+
+            Console.ResetColor();
+
             return true;
         }
         public void EditAccount()
@@ -447,7 +498,6 @@ namespace DEVinBank.Entities
         {
 
         }
-
     }
              
 }

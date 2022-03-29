@@ -1,6 +1,7 @@
 ﻿using System;
 using DEVinBank.Entities;
 using DEVinBank.Screens;
+using DEVinBank.Enums;
 
 namespace DEVinBank
 {
@@ -23,17 +24,13 @@ namespace DEVinBank
 
                 #region Show main menu
                 if (state == 0)
-                {
                     state = Menu.MainMenu();
 
-                }
                 #endregion
 
                 #region Show create account menu
                 if (state == 1)
-                {
                     state = Menu.AccountMenu();
-                }
                 #endregion
 
                 #region Create Checking, Savings or Investment Accounts
@@ -141,7 +138,7 @@ namespace DEVinBank
                         Console.Write("Adicione uma descrição para essa transação: ");
                         string? note = Console.ReadLine();
 
-                        if (!account.MakeWithdrawal(amount, Program.systemTime, DateTime.Now, note))
+                        if (!account.MakeWithdrawal(amount, Program.systemTime, DateTime.Now, TransactionType.Saque, note))
                             throw new Exception();
 
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -186,7 +183,7 @@ namespace DEVinBank
                         Console.Write("Adicione uma descrição para essa transação: ");
                         string? note = Console.ReadLine();
 
-                        account.MakeDeposit(amount, Program.systemTime, DateTime.Now, note);
+                        account.MakeDeposit(amount, Program.systemTime, DateTime.Now, TransactionType.Depósito, note);
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nDepósito realizado com sucesso!");
@@ -295,6 +292,7 @@ namespace DEVinBank
                             throw new Exception();
                         }
 
+                        Console.Clear();
                         Console.WriteLine("Fazer uma transferência\n");
                         BankAccount? originAccount = BankAccount.GetBankAccountByAccountNumber(0);
                         if (originAccount == null)
@@ -501,7 +499,7 @@ namespace DEVinBank
                             throw new Exception();
 
                         Console.Clear();
-                        Console.WriteLine("LISTAR CONTAS DEVINBANK\n");
+                        Console.WriteLine("Lista contas DEVinBank\n");
                         Console.WriteLine(BankAccount.ListAllAccounts());
                         Console.WriteLine("\nPressione enter para sair...");
                         Console.ReadLine();
@@ -513,12 +511,63 @@ namespace DEVinBank
                     {
                         state = -1;
                     }
+                }
+                #endregion
+
+                #region List all transfers
+                if (state == 10)
+                {
+                    try
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Listar todas as transferências\n");
+
+                        if (!BankAccount.ListTransfers())
+                            throw new Exception();
+
+                        Console.WriteLine("\nPressione enter para sair...");
+                        Console.ReadLine();
+                        Console.Clear();
+
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }                    
+                }
+                #endregion
+
+                #region List Negative Accounts
+                if (state == 11)
+                {
+                    try
+                    {
+                        if (!BankAccount.ListNegativeAccounts())
+                            throw new Exception();
+
+                        Console.WriteLine("\nPressione enter para sair...");
+                        Console.ReadLine();
+                        Console.Clear();
+
+                        state = 0;
+                    }
+                    catch (Exception)
+                    {
+                        state = -1;
+                    }
+                }
+                #endregion
+
+                #region List DEVinBank Investment Fund
+                if (state == 12)
+                {
 
                 }
                 #endregion
 
                 #region Edit Customer Information
-                if (state == 10)
+                if (state == 13)
                 {
                     try
                     {
@@ -588,7 +637,7 @@ namespace DEVinBank
                 #endregion
 
                 #region Delete Account
-                if (state == 11)
+                if (state == 14)
                 {
                     try
                     {
@@ -654,8 +703,12 @@ namespace DEVinBank
                 }
                 #endregion
 
+                #region Advance System Date in 6 months
+                if (state == 15)
+                #endregion
+
                 #region Exit program
-                if (state == 12)
+                if (state == 16)
                 {
                     break;
                 }

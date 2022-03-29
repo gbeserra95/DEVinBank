@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DEVinBank.Enums;
 
 namespace DEVinBank.Entities
 {
@@ -91,7 +92,7 @@ namespace DEVinBank.Entities
 
             string note = $"Investimento {investmentType} - {yearRate}% a.a. para retirada em {Program.systemTime.AddMonths(months):dd/MM/yyyy}.";
 
-            MakeWithdrawal(amount, Program.systemTime, DateTime.Now, note);
+            MakeWithdrawal(amount, Program.systemTime, DateTime.Now, TransactionType.Investimento, note);
 
             Investment investment = new(AccNumber, amount, Program.systemTime, Program.systemTime.AddMonths(months), yearRate.ToString(), note);
             Investments.Add(investment);

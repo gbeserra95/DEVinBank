@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DEVinBank.Enums;
 
 namespace DEVinBank.Entities
 {
     public class Transaction
     {
-        public string? AccNumber { get; }
+        public BankAccount Account { get; }
+        public TransactionType Type { get; }
         public decimal? Amount { get; }
         public string Date { get; }
         public string Time { get; }
         public string? Note { get; }
 
-        public Transaction(string? accountNumber, decimal? amount, string date, string time, string? note)
+        public Transaction(BankAccount account, TransactionType type, decimal? amount, string date, string time, string? note)
         {
-            AccNumber = accountNumber;
+            Account = account;
+            Type = type;
             Amount = amount;
             Date = date;
             Time = time;
