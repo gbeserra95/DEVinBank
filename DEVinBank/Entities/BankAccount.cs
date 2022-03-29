@@ -18,9 +18,10 @@ namespace DEVinBank.Entities
         private static int accountNumberSeed = 1;
         readonly static string[] branches = { "001 - Florianópolis", "002 - São José", "003 - Biguaçu" };
 
-        public static (string name, decimal rate, int requiredMonths) LCI = ("LCI", 8m, 6);
-        public static (string name, decimal rate, int requiredMonths) LCA = ("LCA", 9m, 12);
-        public static (string name, decimal rate, int requiredMonths) CDB = ("CDB", 10m, 36);
+        public static double CDI = 7.25;
+        public static (string name, double rate, int requiredMonths) LCI = ("LCI", 8, 6);
+        public static (string name, double rate, int requiredMonths) LCA = ("LCA", 9, 12);
+        public static (string name, double rate, int requiredMonths) CDB = ("CDB", 10, 36);
 
         public static bool YesOrNoAnswer(string message)
         {
@@ -430,10 +431,12 @@ namespace DEVinBank.Entities
         }
         public static bool ListTransfers()
         {
-            if(Transactions.Count == 0)
+            Console.Clear();
+
+            if (Transactions.Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nAinda não existem transações neste banco.\n");
+                Console.WriteLine("Não existem transações neste banco.\n");
                 Console.ResetColor();
 
                 Console.WriteLine("\nPressione enter para sair...");
@@ -441,6 +444,8 @@ namespace DEVinBank.Entities
 
                 return false;
             }
+
+            Console.WriteLine("Listar todas as transferências\n");
 
             foreach (Transaction transaction in Transactions)
                 Console.WriteLine($"{transaction.Date} {transaction.Time} | {transaction.Type} | {transaction.Account.Type} {transaction.Account.AccNumber} - {transaction.Account.Name} - CPF: {transaction.Account.CPF} | R${String.Format("{0:#,0.00}", transaction.Amount)} | {transaction.Note}");
@@ -451,14 +456,12 @@ namespace DEVinBank.Entities
         {
             Console.Clear();
 
-            Console.WriteLine("Contas Negativas:\n");
-
             IEnumerable<BankAccount> negativeAccounts = Accounts.Where(account => account.Balance < 0);
             
             if(!negativeAccounts.Any())
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nNão existem contas negativas neste banco.");
+                Console.WriteLine("Não existem contas negativas neste banco.");
                 Console.ResetColor();
 
                 Console.WriteLine("\nPressione enter para sair...");
@@ -466,12 +469,13 @@ namespace DEVinBank.Entities
 
                 return false;
             }
+            Console.WriteLine("Contas Negativas\n");
 
             Console.ForegroundColor = ConsoleColor.Red;
 
             foreach (var account in negativeAccounts)
             {
-                Console.WriteLine($"{account.AccNumber} | {account.Name} - CPF: {account.CPF} | {account.Type} | Agência: {account.Branch} | Saldo: {account.Balance}");
+                Console.WriteLine($"{account.AccNumber} | {account.Name} - CPF: {account.CPF} | {account.Type} | Agência: {account.Branch} | Saldo: R${String.Format("{0:#,0.00}", account.Balance)}");
             }
 
             Console.ResetColor();
@@ -494,9 +498,15 @@ namespace DEVinBank.Entities
 
             return true;
         }
-        public virtual void PerformSixMonthsAdvance()
+        public static void PerformEndOfMonth()
         {
+            Program.systemTime = Program.systemTime.AddMonths(1);
 
+            foreach (var account in Accounts)
+                account.UpdateSavingsAccount();
+        }
+        public virtual void UpdateSavingsAccount()
+        { 
         }
     }
              

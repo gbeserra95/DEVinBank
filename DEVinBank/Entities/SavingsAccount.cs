@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DEVinBank.Enums;
 
 namespace DEVinBank.Entities
 {
@@ -69,7 +70,7 @@ namespace DEVinBank.Entities
                     throw new Exception();
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("\nATENÇÃO: Para simular sua rentabilidade, você deve escolher uma porcentagem de rendimento anual.\nPor exemplo: escolha 11 para simular uma rentabilidade de 11% a.a..");
+                Console.WriteLine("\nATENÇÃO: Para simular sua rentabilidade, você deve escolher uma porcentagem de rendimento anual.\nPor exemplo: escolha 11,25 para simular uma rentabilidade de 11,25% a.a..");
                 Console.ResetColor();
 
                 Console.Write("\nDigite a rentabilidade anual que você deseja para simular seu investimento: ");
@@ -79,12 +80,14 @@ namespace DEVinBank.Entities
                 if (yearRate == null)
                     throw new Exception();
 
-                decimal monthRate = Convert.ToDecimal(yearRate)/12;
+                double monthlyRate = Math.Pow((double)1 + Convert.ToDouble(yearRate) / 100, (double)1 / 12) - 1;
 
-                if (monthRate <= 0)
+                if (monthlyRate <= 0)
                     throw new Exception();
 
-                decimal? agregatedBalance = Balance * (1 + (months * monthRate) / 100);
+                decimal? agregatedBalance = Balance;
+                for (int i = 0; i < months; i++)
+                    agregatedBalance += (agregatedBalance * Convert.ToDecimal(monthlyRate));
                                 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nEm {months} meses(s), com rentabilidade de {yearRate}% a.a., você possuirá um saldo de R${String.Format("{0:#,0.00}", Decimal.Round(Convert.ToDecimal(agregatedBalance), 2))}.\n");
@@ -135,6 +138,13 @@ namespace DEVinBank.Entities
 
                 return true;
             }
+        }
+
+        public override void UpdateSavingsAccount()
+        {
+            double monthlyRate = Math.Pow((double)1 + CDI / 100, (double)1 / 12) - 1;
+
+            MakeDeposit(this.Balance * Convert.ToDecimal(monthlyRate), Program.systemTime, DateTime.Now, TransactionType.Juros, $"Juros mensais da poupança com CDI de {CDI}% .a.a..");
         }
     }
 }

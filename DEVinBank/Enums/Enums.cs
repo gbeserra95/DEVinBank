@@ -11,6 +11,7 @@ namespace DEVinBank.Enums
         Saque,
         Depósito,
         Transferência,
-        Investimento
+        Investimento,
+        Juros
     }
 }

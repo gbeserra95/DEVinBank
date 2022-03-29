@@ -35,7 +35,7 @@ namespace DEVinBank.Screens
             Console.WriteLine("9 - Listar contas DEVinBank");
             Console.WriteLine("10 - Listar todas as transferências");
             Console.WriteLine("11 - Listar contas com saldo negativo");
-            Console.WriteLine("12 - Verificar valor total dos investimentos DEVinBank");
+            Console.WriteLine("12 - Verificar valor do Fundo de investimentos DEVinBank");
             Console.WriteLine("13 - Editar dados do cliente");
             Console.WriteLine("14 - Excluir conta");
             Console.WriteLine("15 - Adianta data do sistema em 6 meses");

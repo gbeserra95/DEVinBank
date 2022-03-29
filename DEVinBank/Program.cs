@@ -218,6 +218,13 @@ namespace DEVinBank
                         Console.WriteLine($"CPF: {account.CPF}");
                         Console.WriteLine($"{account.Type}: {account.AccNumber}");
                         Console.WriteLine($"Agência: {account.Branch}");
+                        if(account.Type == "Conta Poupança")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"\nA taxa CDI atual é de {BankAccount.CDI}% a.a..");
+                            Console.ResetColor();
+                        }
+                            
                         if (account.Balance > 0)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
@@ -519,9 +526,6 @@ namespace DEVinBank
                 {
                     try
                     {
-                        Console.Clear();
-                        Console.WriteLine("Listar todas as transferências\n");
-
                         if (!BankAccount.ListTransfers())
                             throw new Exception();
 
@@ -562,7 +566,21 @@ namespace DEVinBank
                 #region List DEVinBank Investment Fund
                 if (state == 12)
                 {
+                    try
+                    {
+                        if(!InvestmentAccount.ShowInvestmentFunds())
+                            throw new Exception();
 
+                        Console.WriteLine("\nPressione enter para sair...");
+                        Console.ReadLine();
+                        Console.Clear();
+
+                        state = 0;
+                    }
+                    catch(Exception)
+                    {
+                        state = -1;
+                    }
                 }
                 #endregion
 
@@ -572,7 +590,7 @@ namespace DEVinBank
                     try
                     {
                         Console.Clear();
-                        Console.WriteLine("EDITAR DADOS DO CLIENTE\n");
+                        Console.WriteLine("Editar dados do cliente\n");
 
                         BankAccount? account = BankAccount.GetBankAccountByAccountNumber(-1);
                         if (account == null)
@@ -705,6 +723,16 @@ namespace DEVinBank
 
                 #region Advance System Date in 6 months
                 if (state == 15)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        BankAccount.PerformEndOfMonth();
+                        InvestmentAccount.UpdateInvestmentsAndCheckIfTheyAreReady();
+                    }
+
+                    Console.Clear();
+                    state = 0;
+                }
                 #endregion
 
                 #region Exit program

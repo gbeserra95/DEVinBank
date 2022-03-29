@@ -10,6 +10,64 @@ namespace DEVinBank.Entities
     public class InvestmentAccount : BankAccount
     {
         protected static List<Investment> Investments = new();
+        public static bool ShowInvestmentFunds()
+        {
+            Console.Clear();
+
+            if (Investments.Count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Não existem investimentos neste banco.");
+                Console.ResetColor();
+
+                Console.WriteLine("\nPressione enter para sair...");
+                Console.ReadLine();
+
+                return false;
+            }
+
+            Console.WriteLine("Fundo de Investimentos DEVinBank");
+
+            decimal? totalInvestmentsAmount = 0;
+
+            foreach (Investment investment in Investments)
+            {
+                totalInvestmentsAmount += investment.Amount;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nO valor total do Fundo de Investimentos DEVinBank é de R${String.Format("{0:#,0.00}", totalInvestmentsAmount)}.");
+            Console.ResetColor();
+
+            return true;
+        }
+
+        public static void UpdateInvestmentsAndCheckIfTheyAreReady()
+        {
+            try
+            {
+                foreach (var investment in Investments)
+                {
+                    double monthlyRate = Math.Pow((double)1 + Convert.ToDouble(investment.Rate) / 100, (double)1 / 12) - 1;
+                    decimal? agregatedAmount = investment.Amount;
+
+                    agregatedAmount += (agregatedAmount * Convert.ToDecimal(monthlyRate));
+
+                    investment.Amount = agregatedAmount;
+
+                    if(investment.FinalDate <= Program.systemTime)
+                    {
+                        BankAccount account = Accounts.First(account => account.AccNumber == investment.AccNumber);
+                        account.MakeDeposit(agregatedAmount, investment.FinalDate, DateTime.Now, TransactionType.Investimento, $"Retorno de investimento realizado em {investment.InitialDate} com rendimento de {investment.Rate}% a.a..");
+                        Investments.Remove(investment);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
 
         public InvestmentAccount(string? name, string? cpf, string? address, decimal? monthlyIncome, string? branch, decimal? initialBalance, string? type) : base(name, cpf, address, monthlyIncome, branch, initialBalance, type)
         {
@@ -68,7 +126,7 @@ namespace DEVinBank.Entities
             else if (state == 802)
                 (investmentType, yearRate, requiredMonths) = LCA;
 
-            decimal monthRate = Convert.ToDecimal(yearRate) / 12;
+            double monthlyRate = Math.Pow((double)1 + yearRate / 100, (double)1 / 12) - 1;
 
             decimal? amount = CheckCurrencyInput("Qual quantia você deseja investir? R$: ", "Quantia inválida!");
 
@@ -83,7 +141,10 @@ namespace DEVinBank.Entities
                 return false;
             }
 
-            decimal? agregatedBalance = amount * (1 + (months * monthRate) / 100);
+            decimal? agregatedBalance = amount;
+            for (int i = 0; i < months; i++)    
+                agregatedBalance += (agregatedBalance * Convert.ToDecimal(monthlyRate));
+
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"\nATENÇÃO! Em {months} meses(s), com rentabilidade de {yearRate}% a.a., você possuirá um saldo de R${String.Format("{0:#,0.00}", Decimal.Round(Convert.ToDecimal(agregatedBalance), 2))}.");
