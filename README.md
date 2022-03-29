@@ -28,8 +28,7 @@ Obtenha o extrato bancário de todas as transações e investimentos de cada con
 
 Na aplicação, também é possível simular o avanço do tempo para obter o retorno dos investimentos e juros da poupança em uma conta.
 
-## Observação
-*Este projeto um projeto tem como objetivo avaliar os conceitos de C# e Programação Orientada a Objetos estudados durante o programa DEVinHouse.*
+*Este projeto tem como objetivo avaliar os conceitos de C# e Programação Orientada a Objetos estudados durante o programa DEVinHouse.*
 
 ## Autor
 Criado por Gabriel Beserra.
