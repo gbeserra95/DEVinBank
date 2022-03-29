@@ -5,7 +5,6 @@ Simule criação de contas, visualização de extratos bancários, saques, depó
 
 ## Instalação
 Baixe este repositório e crie uma solução através do Visual Studio. A partir disso, você pode executá-lo ou criar um arquivo de execução.
-## Execução do Json-Server
 
 ## Funcionalidades
 - Simule a criação de contas corrente, poupança ou investimento.
