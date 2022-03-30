@@ -58,7 +58,7 @@ namespace DEVinBank.Entities
                     if(investment.FinalDate <= Program.systemTime)
                     {
                         BankAccount account = Accounts.First(account => account.AccNumber == investment.AccNumber);
-                        account.MakeDeposit(agregatedAmount, investment.FinalDate, DateTime.Now, TransactionType.Investimento, $"Retorno de investimento realizado em {investment.InitialDate} com rendimento de {investment.Rate}% a.a..");
+                        account.MakeDeposit(agregatedAmount, investment.FinalDate, DateTime.Now, TransactionType.Investimento, $"Retorno de investimento realizado em {investment.InitialDate:dd/MM/yyyy} com rendimento de {investment.Rate}% a.a..");
                         Investments.Remove(investment);
                     }
                 }
